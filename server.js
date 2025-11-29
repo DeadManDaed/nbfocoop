@@ -21,13 +21,13 @@ const pool = new Pool({
 	} : false 
 	);
   
-  const pool = new Pool({
+  /*const pool = new Pool({
   user: process.env.PGUSER || 'postgres',
   host: process.env.PGHOST || 'localhost',
   database: process.env.PGDATABASE || 'nbfo',
   password: process.env.PGPASSWORD || '3050P@ss',
   port: process.env.PGPORT || 5432,
-});
+});*/
 
 // Test de connexion à la base de données
 pool.connect((err, client, release) => {
