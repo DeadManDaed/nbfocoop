@@ -15,11 +15,9 @@ app.use(bodyParser.json());
 
 // Configuration PostgreSQL
 const pool = new Pool({
-	connectionString: proccess.env.DATABASE_URL,
-	ssl: process.env.DATABASE_URL ? {
-		rejectUnauthorized: false
-	} : false 
-	);
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
   
   /*const pool = new Pool({
   user: process.env.PGUSER || 'postgres',
