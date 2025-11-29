@@ -402,7 +402,7 @@
 
         /* Responsive */
         @media (max-width: 968px) {
-            .container {
+        .container {
                 padding: 20px;
             }
             
@@ -427,421 +427,280 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-left">
-            <div class="logo">📦</div>
-            <div class="header-title">
-                <h1>Gestion de Stock</h1>
-                <p>Suivi des inventaires et mouvements</p>
-            </div>
-        </div>
-        <div class="header-actions">
-            <button class="btn-dashboard" onclick="window.location.href='/dashboard.html'">
-                <span>🏠</span> Tableau de bord
-            </button>
-            <button class="btn-logout" onclick="logout()">Déconnexion</button>
-        </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">📦</div>
+      <div class="header-title">
+        <h1>Gestion de Stock</h1>
+        <p>Suivi des inventaires et mouvements</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-dashboard" onclick="window.location.href='/dashboard.html'">
+        <span>🏠</span> Tableau de bord
+      </button>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('mouvements', event)">
+      <span>🔄</span> Mouvements
+    </div>
+    <div class="nav-tab" onclick="switchTab('lots', event)">
+      <span>📋</span> Lots
+    </div>
+    <div class="nav-tab" onclick="switchTab('inventaire', event)">
+      <span>📊</span> Inventaire
+    </div>
+    <div class="nav-tab" onclick="switchTab('alerts', event)">
+      <span>⚠️</span> Alertes
+    </div>
+  </div>
+
+  <!-- Container -->
+  <div class="container">
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="totalEntrees">0</div>
+        <div class="stat-label">Entrées totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalSorties">0</div>
+        <div class="stat-label">Sorties totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalLots">0</div>
+        <div class="stat-label">Lots actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="alertCount">0</div>
+        <div class="stat-label">Alertes</div>
+      </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-        <div class="nav-tab active" onclick="switchTab('mouvements')">
-            <span>🔄</span> Mouvements
+    <!-- TAB: Admission -->
+    <div id="tab-mouvements" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>📥</span> Admission d’un nouveau lot</h2>
         </div>
-        <div class="nav-tab" onclick="switchTab('lots')">
-            <span>📋</span> Lots
-        </div>
-        <div class="nav-tab" onclick="switchTab('inventaire')">
-            <span>📊</span> Inventaire
-        </div>
-        <div class="nav-tab" onclick="switchTab('alerts')">
-            <span>⚠️</span> Alertes
-        </div>
-    </div>
-
-    <!-- Container -->
-    <div class="container">
-        <div id="alertBox" class="alert"></div>
-
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-value" id="totalEntrees">0</div>
-                <div class="stat-label">Entrées totales</div>
+        <form id="admissionForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nomProducteur">Nom du producteur *</label>
+              <input type="text" id="nomProducteur" required>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalSorties">0</div>
-                <div class="stat-label">Sorties totales</div>
+            <div class="form-group">
+              <label for="telProducteur">Téléphone *</label>
+              <input type="text" id="telProducteur" required>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalLots">0</div>
-                <div class="stat-label">Lots actifs</div>
+            <div class="form-group">
+              <label for="qte">Quantité *</label>
+              <input type="number" id="qte" required min="0" step="0.01">
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="alertCount">0</div>
-                <div class="stat-label">Alertes</div>
+            <div class="form-group">
+              <label for="unite">Unité *</label>
+              <select id="unite" required>
+                <option value="">Sélectionner</option>
+                <option value="kg">Kilogrammes (kg)</option>
+                <option value="g">Grammes (g)</option>
+                <option value="L">Litres (L)</option>
+                <option value="unité">Unités</option>
+                <option value="sac">Sacs</option>
+                <option value="caisse">Caisses</option>
+              </select>
             </div>
-        </div>
-
-<!-- TAB: Admission -->
-<div id="tab-mouvements" class="tab-content active">
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title"><span>📥</span> Admission d’un nouveau lot</h2>
-    </div>
-    <form id="admissionForm">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="nomProducteur">Nom du producteur *</label>
-          <input type="text" id="nomProducteur" required placeholder="Ex: Mme Tchoumba">
-        </div>
-        <div class="form-group">
-          <label for="telProducteur">Téléphone *</label>
-          <input type="text" id="telProducteur" required placeholder="Ex: 690123456">
-        </div>
-        <div class="form-group">
-          <label for="qte">Quantité *</label>
-          <input type="number" id="qte" required min="0" step="0.01" placeholder="0">
-        </div>
-          <div class="form-group">
-  <label for="unite">Unité *</label>
-  <select id="unite" required>
-    <option value="">Sélectionner</option>
-    <option value="kg">Kilogrammes (kg)</option>
-    <option value="g">Grammes (g)</option>
-    <option value="L">Litres (L)</option>
-    <option value="unité">Unités</option>
-    <option value="sac">Sacs</option>
-    <option value="caisse">Caisses</option>
-  </select>
+            <div class="form-group">
+              <label for="prixRef">Prix de référence *</label>
+              <input type="number" id="prixRef" required min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="qualite">Qualité *</label>
+              <select id="qualite" required>
+                <option value="A">A (standard)</option>
+                <option value="B">B (moyenne)</option>
+                <option value="C">C (faible)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="categorieLot">Catégorie *</label>
+              <select id="categorieLot" required>
+                <option value="secs">Produits secs</option>
+                <option value="frais">Produits frais</option>
+                <option value="sensible">Produits sensibles</option>
+                <option value="manualim">Manuf. alimentaires</option>
+                <option value="nonalim">Non alimentaires</option>
+              </select>
+            </div>
           </div>
-        <div class="form-group">
-          <label for="prixRef">Prix de référence *</label>
-          <input type="number" id="prixRef" required min="0" step="0.01" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="qualite">Qualité *</label>
-          <select id="qualite" required>
-            <option value="A">A (standard)</option>
-            <option value="B">B (moyenne)</option>
-            <option value="C">C (faible)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="categorieLot">Catégorie *</label>
-          <select id="categorieLot" required>
-            <option value="secs">Produits secs</option>
-            <option value="frais">Produits frais</option>
-            <option value="sensible">Produits sensibles</option>
-            <option value="manualim">Manuf. alimentaires</option>
-            <option value="nonalim">Non alimentaires</option>
-          </select>
-        </div>
+
+          <div class="form-grid">
+            <div class="form-group"><label>Valeur brute</label><div id="valBrute">0</div></div>
+            <div class="form-group"><label>Coef qualité</label><div id="coefQualite">1.00</div></div>
+            <div class="form-group"><label>Valeur estimée</label><div id="valEstimee">0</div></div>
+            <div class="form-group"><label>Taux de taxe</label><div id="tauxTax">10%</div></div>
+            <div class="form-group"><label>Montant attribué</label><div id="montantAttribue">0</div></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary"><span>✅</span> Enregistrer l’admission</button>
+        </form>
       </div>
 
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Valeur brute</label>
-          <div id="valBrute">0</div>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>📋</span> Lots enregistrés</h2>
+          <button class="btn btn-secondary" onclick="loadLots()"><span>🔄</span> Actualiser</button>
         </div>
-        <div class="form-group">
-          <label>Coef qualité</label>
-          <div id="coefQualite">1.00</div>
-        </div>
-        <div class="form-group">
-          <label>Valeur estimée</label>
-          <div id="valEstimee">0</div>
-        </div>
-        <div class="form-group">
-          <label>Taux de taxe</label>
-          <div id="tauxTax">10%</div>
-        </div>
-        <div class="form-group">
-          <label>Montant attribué</label>
-          <div id="montantAttribue">0</div>
+        <div class="table-container" id="lotsAdmissionTableContainer">
+          <div class="loading"><div class="loading-spinner"></div><p>Chargement des lots...</p></div>
         </div>
       </div>
-
-      <button type="submit" class="btn btn-primary">
-        <span>✅</span> Enregistrer l’admission
-      </button>
-    </form>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title"><span>📋</span> Lots enregistrés</h2>
-      <button class="btn btn-secondary" onclick="loadLots()">
-        <span>🔄</span> Actualiser
-      </button>
     </div>
-    <div class="table-container" id="lotsTableContainer">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        <p>Chargement des lots...</p>
+
+    <!-- TAB: Lots -->
+    <div id="tab-lots" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2 class="card-title"><span>➕</span> Créer un lot</h2></div>
+        <form id="lotForm"> ... </form>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2 class="card-title"><span>📋</span> Liste des lots</h2></div>
+        <div class="table-container" id="lotsTableContainer">
+          <div class="loading"><div class="loading-spinner"></div><p>Chargement des lots...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Inventaire -->
+    <div id="tab-inventaire" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2 class="card-title"><span>📊</span> Inventaire</h2></div>
+        <div class="table-container" id="inventaireTableContainer">
+          <div class="loading"><div class="loading-spinner"></div><p>Chargement de l’inventaire...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Alertes -->
+    <div id="tab-alerts" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2 class="card-title"><span>⚠️</span> Alertes et notifications</h2></div>
+        <div id="alertsContainer">
+          <div class="loading"><div class="loading-spinner"></div><p>Chargement des alertes...</p></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-        <!-- TAB: Lots -->
-        <div id="tab-lots" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>➕</span> Créer un lot</h2>
-                </div>
-                <form id="lotForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="nomProducteur">Nom du producteur *</label>
-                            <input type="text" id="nomProducteur" required placeholder="Ex: Koné Martin">
-                        </div>
-                        <div class="form-group">
-                            <label for="telProducteur">Téléphone *</label>
-                            <input type="tel" id="telProducteur" required placeholder="+237 6XX XX XX XX">
-                        </div>
-                        <div class="form-group">
-                            <label for="typeProducteur">Type de producteur *</label>
-                            <select id="typeProducteur" required>
-                                <option value="">Sélectionner</option>
-                                <option value="agriculteur">Agriculteur</option>
-                                <option value="eleveur">Éleveur</option>
-                                <option value="artisan">Artisan</option>
-                                <option value="transformateur">Transformateur</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="categorie">Catégorie *</label>
-                            <select id="categorie" required>
-                                <option value="">Sélectionner</option>
-                                <option value="fruits">Fruits</option>
-                                <option value="legumes">Légumes</option>
-                                <option value="cereales">Céréales</option>
-                                <option value="tubercules">Tubercules</option>
-                                <option value="artisanat">Artisanat</option>
-                                <option value="elevage">Élevage</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description *</label>
-                        <input type="text" id="description" required placeholder="Description du produit">
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="quantiteLot">Quantité *</label>
-                            <input type="number" id="quantiteLot" required min="0" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="uniteLot">Unité *</label>
-                            <select id="uniteLot" required>
-                                <option value="kg">kg</option>
-                                <option value="g">g</option>
-                                <option value="L">L</option>
-                                <option value="unité">unité</option>
-                                <option value="sac">sac</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="prixRef">Prix de référence *</label>
-                            <input type="number" id="prixRef" required min="0" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="qualite">Qualité</label>
-                            <select id="qualite">
-                                <option value="excellente">Excellente</option>
-                                <option value="bonne">Bonne</option>
-                                <option value="moyenne">Moyenne</option>
-                            </select>
-</div>
-                        <div class="form-group">
-                            <label for="dateReception">Date de réception</label>
-                            <input type="date" id="dateReception">
-                        </div>
-                        <div class="form-group">
-                            <label for="dateExpiration">Date d'expiration</label>
-                            <input type="date" id="dateExpiration">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <span>📦</span> Créer le lot
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>📋</span> Liste des lots</h2>
-                    <button class="btn btn-secondary" onclick="loadLots()">
-                        <span>🔄</span> Actualiser
-                    </button>
-                </div>
-                <div class="table-container" id="lotsTableContainer">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <p>Chargement des lots...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: Inventaire -->
-        <div id="tab-inventaire" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>📊</span> État des stocks</h2>
-                    <button class="btn btn-secondary" onclick="loadInventaire()">
-                        <span>🔄</span> Actualiser
-                    </button>
-                </div>
-                <div class="table-container" id="inventaireTableContainer">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <p>Chargement de l'inventaire...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: Alertes -->
-        <div id="tab-alerts" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>⚠️</span> Alertes et notifications</h2>
-                </div>
-                <div id="alertsContainer">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <p>Chargement des alertes...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let currentUser = null;
-        let allStock = [];
-        let allLots = [];
+                                            
+    let currentUser = null;
+let allStock = [];
+let allLots = [];
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            const userInfo = sessionStorage.getItem('userInfo');
-            if (!userInfo) {
-                window.location.href = '/index.html';
-                return;
-            }
+// === Initialisation ===
+document.addEventListener('DOMContentLoaded', () => {
+  const userInfo = sessionStorage.getItem('userInfo');
+  if (!userInfo) {
+    window.location.href = '/index.html';
+    return;
+  }
 
-            currentUser = JSON.parse(userInfo);
-            
-            // Vérifier que l'utilisateur a accès au stock
-            if (currentUser.role !== 'stock' && currentUser.role !== 'admin') {
-                showAlert('Accès refusé : vous devez être gestionnaire de stock', 'error');
-                setTimeout(() => window.location.href = '/dashboard.html', 2000);
-                return;
-            }
+  currentUser = JSON.parse(userInfo);
 
-            // Charger les données
-            loadStock();
-            loadLots();
-            loadLotsForSelect();
-            loadInventaire();
-            loadAlerts();
-            updateStats();
-        });
+  // Vérifier rôle
+  if (currentUser.role !== 'stock' && currentUser.role !== 'admin') {
+    showAlert('Accès refusé : vous devez être gestionnaire de stock', 'error');
+    setTimeout(() => window.location.href = '/dashboard.html', 2000);
+    return;
+  }
 
-        // Gestion des tabs
-        function switchTab(tabName) {
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.closest('.nav-tab').classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-        }
+  // Charger les données
+  loadStock();
+  loadLots();
+  loadLotsForSelect();
+  loadInventaire();
+  loadAlerts();
+  updateStats();
+});
 
-        // Affichage des alertes
-        function showAlert(message, type) {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.textContent = message;
-            alertBox.className = `alert alert-${type}`;
-            alertBox.style.display = 'block';
-            
-            setTimeout(() => {
-                alertBox.style.display = 'none';
-            }, 5000);
-        }
+// === Gestion des tabs ===
+function switchTab(tabName, event) {
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  event.target.closest('.nav-tab').classList.add('active');
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+}
 
-        async function loadStock() {
-            const container = document.getElementById('stockTableContainer');
-            
-            try {
-                const response = await fetch('/stock');
-                allStock = await response.json();
+// === Affichage des alertes ===
+function showAlert(message, type) {
+  const alertBox = document.getElementById('alertBox');
+  if (!alertBox) return;
+  alertBox.textContent = message;
+  alertBox.className = `alert alert-${type}`;
+  alertBox.style.display = 'block';
+  setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+}
 
-                if (allStock.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun mouvement enregistré</p>';
-                    return;
-                }
+// === STOCK ===
+async function loadStock() {
+  const container = document.getElementById('stockTableContainer');
+  try {
+    const response = await fetch('/stock');
+    allStock = await response.json();
 
-                container.innerHTML = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Produit</th>
-                                <th>Type</th>
-                                <th>Quantité</th>
-                                <th>Magasin</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${allStock.slice(0, 50).map(s => `
-                                <tr>
-                                    <td>${new Date(s.date_mouvement).toLocaleDateString('fr-FR')}</td>
-                                    <td>${s.produit}</td>
-                                    <td>
-                                        <span class="badge badge-${s.type_mouvement}">
-                                            ${s.type_mouvement === 'entree' ? '⬇️ Entrée' : '⬆️ Sortie'}
-                                        </span>
-                                    </td>
-                                    <td style="font-weight: 600;">${s.quantite} ${s.unite}</td>
-                                    <td>${s.magasin || '-'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } catch (error) {
-                console.error('Erreur:', error);
-                container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
-            }
-        }
+    if (allStock.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">Aucun mouvement enregistré</p>';
+      return;
+    }
 
-        async function loadLotsForSelect() {
-            try {
-                const response = await fetch('/lots');
-                const lots = await response.json();
-                const select = document.getElementById('lotId');
-                
-                select.innerHTML = '<option value="">Aucun lot</option>' +
-                    lots.map(lot => `<option value="${lot.id}">Lot #${lot.id} - ${lot.description}</option>`).join('');
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
-        }
+    container.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Produit</th>
+            <th>Type</th>
+            <th>Quantité</th>
+            <th>Magasin</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${allStock.slice(0, 50).map(s => `
+            <tr>
+              <td>${new Date(s.date_mouvement).toLocaleDateString('fr-FR')}</td>
+              <td>${s.produit}</td>
+              <td><span class="badge badge-${s.type_mouvement}">
+                ${s.type_mouvement === 'entree' ? '⬇️ Entrée' : '⬆️ Sortie'}
+              </span></td>
+              <td style="font-weight:600;">${s.quantite} ${s.unite}</td>
+              <td>${s.magasin || '-'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (error) {
+    console.error('Erreur:', error);
+    container.innerHTML = '<p style="color:#c62828; text-align:center; padding:40px;">Erreur de chargement</p>';
+  }
+}
 
-        // === Paramètres de calcul ===
-const TAXBYCAT = {
-  frais: 0.25, court: 0.25, secs: 0.10, manualim: 0.10, nonalim: 0.10, sensible: 0.25
-};
+// === Admission des lots ===
+const TAXBYCAT = { frais:0.25, secs:0.10, manualim:0.10, nonalim:0.10, sensible:0.25 };
 const QUAL_COEF = { A:1.00, B:0.95, C:0.90 };
 
-// === Éléments du formulaire ===
 const qteEl = document.getElementById('qte');
 const prixRefEl = document.getElementById('prixRef');
 const qualiteEl = document.getElementById('qualite');
 const categorieEl = document.getElementById('categorieLot');
+const uniteEl = document.getElementById('unite');
 
 const valBruteEl = document.getElementById('valBrute');
 const coefQualiteEl = document.getElementById('coefQualite');
@@ -849,7 +708,6 @@ const valEstimeeEl = document.getElementById('valEstimee');
 const tauxTaxEl = document.getElementById('tauxTax');
 const montantAttribueEl = document.getElementById('montantAttribue');
 
-// === Calcul dynamique ===
 function recompute() {
   const qte = parseFloat(qteEl.value || 0);
   const prix = parseFloat(prixRefEl.value || 0);
@@ -869,7 +727,6 @@ function recompute() {
 }
 [qteEl, prixRefEl, qualiteEl, categorieEl].forEach(el => el.addEventListener('input', recompute));
 
-// === Extraire les données du formulaire ===
 function getFormData() {
   const data = {
     nomProducteur: document.getElementById('nomProducteur').value.trim(),
@@ -878,7 +735,7 @@ function getFormData() {
     prixRef: parseFloat(prixRefEl.value || 0),
     qualite: qualiteEl.value || 'A',
     categorieLot: categorieEl.value || 'secs',
-      unite: document.getElementById('unite').value || 'unite'
+    unite: uniteEl.value || 'unité'
   };
   const qual = QUAL_COEF[data.qualite];
   const tax = TAXBYCAT[data.categorieLot];
@@ -888,18 +745,15 @@ function getFormData() {
   return { data, brut, qual, tax, estimee, attribue };
 }
 
-// === Soumission du formulaire ===
 document.getElementById('admissionForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const { data } = getFormData();
-
   try {
     const resp = await fetch('/lots', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-
     if (resp.ok) {
       showAlert('Lot admis avec succès. Recette virtuelle enregistrée.', 'success');
       e.target.reset();
@@ -914,15 +768,115 @@ document.getElementById('admissionForm').addEventListener('submit', async (e) =>
   }
 });
 
-// === Chargement des lots enregistrés ===
+// === Création de lot détaillé ===
+document.getElementById('lotForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    nomProducteur: document.getElementById('nomProducteur').value.trim(),
+    telProducteur: document.getElementById('telProducteur').value.trim(),
+    typeProducteur: document.getElementById('typeProducteur').value,
+    categorie: document.getElementById('categorie').value,
+    description: document.getElementById('description').value.trim(),
+    quantite: parseFloat(document.getElementById('quantiteLot').value || 0),
+    unite: document.getElementById('uniteLot').value,
+    prixRef: parseFloat(document.getElementById('prixRef').value || 0),
+    qualite: document.getElementById('qualite').value,
+    dateReception: document.getElementById('dateReception').value,
+    dateExpiration: document.getElementById('dateExpiration').value
+  };
+  try {
+    const resp = await fetch('/lots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (resp.ok) {
+      showAlert('Lot créé avec succès.', 'success');
+      e.target.reset();
+      loadLots();
+    } else {
+      showAlert('Erreur lors de la création du lot.', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert('Erreur réseau ou serveur.', 'error');
+  }
+});
+
+// === Chargement des lots ===
 async function loadLots() {
-  const container = document.getElementById('lotsTableContainer');
   try {
     const resp = await fetch('/lots');
     const lots = await resp.json();
 
-    if (lots.length === 0) {
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">Aucun lot enregistré</p>';
+    const html = lots.length === 0 
+      ? '<p style="text-align:center; color:#999; padding:40px;">Aucun lot enregistré</p>'
+      : `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producteur</th>
+              <th>Catégorie</th>
+              <th>Quantité</th>
+              <th>Valeur estimée</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lots.map(lot => `
+              <tr>
+                <td>${lot.id}</td>
+                <td>${lot.producteur || '-'}</td>
+                <td>${lot.categorie || '-'}</td>
+                <td>${lot.quantite} ${lot.unite || ''}</td>
+                <td>${lot.val_estimee ? lot.val_estimee.toLocaleString('fr-FR') : '-'}</td>
+                <td><span class="badge badge-credit">${lot.statut || 'Enregistré'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+    // Remplir les deux containers (Admission + Lots)
+    const admissionContainer = document.getElementById('lotsAdmissionTableContainer');
+    const lotsContainer = document.getElementById('lotsTableContainer');
+    if (admissionContainer) admissionContainer.innerHTML = html;
+    if (lotsContainer) lotsContainer.innerHTML = html;
+
+  } catch (err) {
+    console.error(err);
+    const errorHtml = '<p style="color:#c62828; text-align:center; padding:40px;">Erreur de chargement</p>';
+    const admissionContainer = document.getElementById('lotsAdmissionTableContainer');
+    const lotsContainer = document.getElementById('lotsTableContainer');
+    if (admissionContainer) admissionContainer.innerHTML = errorHtml;
+    if (lotsContainer) lotsContainer.innerHTML = errorHtml;
+  }
+}
+
+// === Lots pour select ===
+async function loadLotsForSelect() {
+  try {
+    const response = await fetch('/lots');
+    const lots = await response.json();
+    const select = document.getElementById('lotId');
+    if (!select) return;
+    select.innerHTML = '<option value="">Aucun lot</option>' +
+      lots.map(lot => `<option value="${lot.id}">Lot #${lot.id} - ${lot.description || lot.producteur}</option>`).join('');
+  } catch (error) {
+    console.error('Erreur:', error);
+  }
+}
+
+// === INVENTAIRE ===
+async function loadInventaire() {
+  const container = document.getElementById('inventaireTableContainer');
+  try {
+    const response = await fetch('/lot-stock');
+    const inventaire = await response.json();
+
+    if (inventaire.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">Aucune donnée d\'inventaire</p>';
       return;
     }
 
@@ -930,188 +884,128 @@ async function loadLots() {
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Producteur</th>
-            <th>Catégorie</th>
-            <th>Quantité</th>
-            <th>Valeur estimée</th>
+            <th>Lot</th>
+            <th>Produit</th>
+            <th>Quantité initiale</th>
+            <th>Quantité restante</th>
             <th>Statut</th>
           </tr>
         </thead>
         <tbody>
-          ${lots.map(lot => `
-            <tr>
-              <td>${lot.id}</td>
-              <td>${lot.producteur}</td>
-              <td>${lot.categorie}</td>
-              <td>${lot.quantite} ${lot.unite}</td>
-              <td>${lot.val_estimee.toLocaleString('fr-FR')}</td>
-              <td><span class="badge badge-credit">${lot.statut || 'Enregistré'}</span></td>
-            </tr>
-          `).join('')}
+          ${inventaire.map(item => {
+            const pourcentage = (item.quantite_restante / item.quantite_initiale) * 100;
+            let statutBadge = 'badge-disponible';
+            let statutTexte = 'Disponible';
+            if (pourcentage < 20) { statutBadge = 'badge-alerte'; statutTexte = 'Stock faible'; }
+            else if (pourcentage < 50) { statutBadge = 'badge-sortie'; statutTexte = 'Stock moyen'; }
+            return `
+              <tr>
+                <td>Lot #${item.lot_id}</td>
+                <td>${item.description || '-'}</td>
+                <td>${item.quantite_initiale || 0}</td>
+                <td style="font-weight:600;">${item.quantite_restante || 0}</td>
+                <td><span class="badge ${statutBadge}">${statutTexte}</span></td>
+              </tr>
+            `;
+          }).join('')}
         </tbody>
       </table>
     `;
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('Erreur:', error);
     container.innerHTML = '<p style="color:#c62828; text-align:center; padding:40px;">Erreur de chargement</p>';
   }
 }
 
-        // === INVENTAIRE ===
-        async function loadInventaire() {
-            const container = document.getElementById('inventaireTableContainer');
-            
-            try {
-                const response = await fetch('/lot-stock');
-                const inventaire = await response.json();
+// === ALERTES ===
+async function loadAlerts() {
+  const container = document.getElementById('alertsContainer');
+  try {
+    const response = await fetch('/lot-stock');
+    const inventaire = await response.json();
 
-                if (inventaire.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucune donnée d\'inventaire</p>';
-                    return;
-                }
+    const alertes = inventaire.filter(item => {
+      const pourcentage = (item.quantite_restante / item.quantite_initiale) * 100;
+      return pourcentage < 20;
+    });
 
-                container.innerHTML = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Lot</th>
-                                <th>Produit</th>
-                                <th>Quantité initiale</th>
-                                <th>Quantité restante</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${inventaire.map(item => {
-                                const pourcentage = (item.quantite_restante / item.quantite_initiale) * 100;
-                                let statutBadge = 'badge-disponible';
-                                let statutTexte = 'Disponible';
-                                
-                                if (pourcentage < 20) {
-                                    statutBadge = 'badge-alerte';
-                                    statutTexte = 'Stock faible';
-                                } else if (pourcentage < 50) {
-                                    statutBadge = 'badge-sortie';
-                                    statutTexte = 'Stock moyen';
-                                }
-                                
-                                return `
-                                    <tr>
-                                        <td>Lot #${item.lot_id}</td>
-                                        <td>${item.description || '-'}</td>
-                                        <td>${item.quantite_initiale || 0}</td>
-                                        <td style="font-weight: 600;">${item.quantite_restante || 0}</td>
-                                        <td><span class="badge ${statutBadge}">${statutTexte}</span></td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } catch (error) {
-                console.error('Erreur:', error);
-                container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
-            }
-        }
+    const lotsResponse = await fetch('/lots');
+    const lots = await lotsResponse.json();
+    const today = new Date();
+    const expirationAlerts = lots.filter(lot => {
+      if (!lot.date_expiration) return false;
+      const expDate = new Date(lot.date_expiration);
+      const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+      return diffDays <= 7 && diffDays >= 0;
+    });
 
-        // === ALERTES ===
-        async function loadAlerts() {
-            const container = document.getElementById('alertsContainer');
-            
-            try {
-                const response = await fetch('/lot-stock');
-                const inventaire = await response.json();
+    document.getElementById('alertCount').textContent = alertes.length + expirationAlerts.length;
 
-                // Filtrer les lots avec stock faible
-                const alertes = inventaire.filter(item => {
-                    const pourcentage = (item.quantite_restante / item.quantite_initiale) * 100;
-                    return pourcentage < 20;
-                });
+    if (alertes.length === 0 && expirationAlerts.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">✓ Aucune alerte pour le moment</p>';
+      return;
+    }
 
-                // Vérifier les dates d'expiration
-                const lotsResponse = await fetch('/lots');
-                const lots = await lotsResponse.json();
-                const today = new Date();
-                const expirationAlerts = lots.filter(lot => {
-                    if (!lot.date_expiration) return false;
-                    const expDate = new Date(lot.date_expiration);
-                    const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
-                    return diffDays <= 7 && diffDays >= 0;
-                });
+    let html = '';
+    if (alertes.length > 0) {
+      html += '<h3 style="color:#d32f2f; margin-bottom:20px;">⚠️ Stocks faibles</h3>';
+      alertes.forEach(item => {
+        html += `
+          <div style="background:#ffebee; padding:15px; border-radius:10px; margin-bottom:15px; border-left:4px solid #d32f2f;">
+            <strong>Lot #${item.lot_id}</strong> - ${item.description || 'Produit'}<br>
+            Quantité restante: ${item.quantite_restante} / ${item.quantite_initiale}<br>
+            <em>Action recommandée: Réapprovisionnement urgent</em>
+          </div>
+        `;
+      });
+    }
+    if (expirationAlerts.length > 0) {
+      html += '<h3 style="color:#f57c00; margin:30px 0 20px 0;">⏰ Expirations prochaines</h3>';
+      expirationAlerts.forEach(lot => {
+        const expDate = new Date(lot.date_expiration);
+        const diffDays = Math.ceil((expDate - new Date()) / (1000 * 60 * 60 * 24));
+        html += `
+          <div style="background:#fff3e0; padding:15px; border-radius:10px; margin-bottom:15px; border-left:4px solid #f57c00;">
+            <strong>Lot #${lot.id}</strong> - ${lot.description || 'Produit'}<br>
+            Expire dans ${diffDays} jour${diffDays > 1 ? 's' : ''} (${expDate.toLocaleDateString('fr-FR')})<br>
+            <em>Action recommandée: Écouler en priorité</em>
+          </div>
+        `;
+      });
+    }
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Erreur:', error);
+    container.innerHTML = '<p style="color:#c62828;">Erreur de chargement des alertes</p>';
+  }
+}
 
-                document.getElementById('alertCount').textContent = alertes.length + expirationAlerts.length;
+// === STATISTIQUES ===
+async function updateStats() {
+  try {
+    const [stockResponse, lotsResponse] = await Promise.all([
+      fetch('/stock'),
+      fetch('/lots')
+    ]);
+    const stock = await stockResponse.json();
+    const lots = await lotsResponse.json();
 
-                if (alertes.length === 0 && expirationAlerts.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">✓ Aucune alerte pour le moment</p>';
-                    return;
-                }
+    const entrees = stock.filter(s => s.type_mouvement === 'entree').length;
+    const sorties = stock.filter(s => s.type_mouvement === 'sortie').length;
 
-                let html = '';
+    document.getElementById('totalEntrees').textContent = entrees;
+    document.getElementById('totalSorties').textContent = sorties;
+    document.getElementById('totalLots').textContent = lots.length;
+  } catch (error) {
+    console.error('Erreur stats:', error);
+  }
+}
 
-                if (alertes.length > 0) {
-                    html += '<h3 style="color: #d32f2f; margin-bottom: 20px;">⚠️ Stocks faibles</h3>';
-                    alertes.forEach(item => {
-                        html += `
-                            <div style="background: #ffebee; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #d32f2f;">
-                                <strong>Lot #${item.lot_id}</strong> - ${item.description || 'Produit'}<br>
-                                Quantité restante: ${item.quantite_restante} / ${item.quantite_initiale}<br>
-                                <em>Action recommandée: Réapprovisionnement urgent</em>
-                            </div>
-                        `;
-                    });
-                }
-
-                if (expirationAlerts.length > 0) {
-                    html += '<h3 style="color: #f57c00; margin: 30px 0 20px 0;">⏰ Expirations prochaines</h3>';
-                    expirationAlerts.forEach(lot => {
-                        const expDate = new Date(lot.date_expiration);
-                        const diffDays = Math.ceil((expDate - new Date()) / (1000 * 60 * 60 * 24));
-                        html += `
-                            <div style="background: #fff3e0; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #f57c00;">
-                                <strong>Lot #${lot.id}</strong> - ${lot.description}<br>
-                                Expire dans ${diffDays} jour${diffDays > 1 ? 's' : ''} (${expDate.toLocaleDateString('fr-FR')})<br>
-                                <em>Action recommandée: Écouler en priorité</em>
-                            </div>
-                        `;
-                    });
-                }
-
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Erreur:', error);
-                container.innerHTML = '<p style="color: #c62828;">Erreur de chargement des alertes</p>';
-            }
-        }
-
-        // === STATISTIQUES ===
-        async function updateStats() {
-            try {
-                const [stockResponse, lotsResponse] = await Promise.all([
-                    fetch('/stock'),
-                    fetch('/lots')
-                ]);
-
-                const stock = await stockResponse.json();
-                const lots = await lotsResponse.json();
-
-                const entrees = stock.filter(s => s.type_mouvement === 'entree').length;
-                const sorties = stock.filter(s => s.type_mouvement === 'sortie').length;
-
-                document.getElementById('totalEntrees').textContent = entrees;
-                document.getElementById('totalSorties').textContent = sorties;
-                document.getElementById('totalLots').textContent = lots.length;
-
-            } catch (error) {
-                console.error('Erreur stats:', error);
-            }
-        }
-
-        // Déconnexion
-        function logout() {
-            sessionStorage.removeItem('userInfo');
-            window.location.href = '/index.html';
-        }
+// === Déconnexion ===
+function logout() {
+  sessionStorage.removeItem('userInfo');
+  window.location.href = '/index.html';
+}                            
     </script>
 </body>
 </html>
