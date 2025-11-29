@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - NBFO Coopérative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header avec navigation */
+        .header {
+            background: linear-gradient(135deg, #2E7D32, #66BB6A);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .welcome-section h2 {
+            color: #2E7D32;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Grille de statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .stat-icon.green { background: linear-gradient(135deg, #81C784, #66BB6A); }
+        .stat-icon.blue { background: linear-gradient(135deg, #64B5F6, #42A5F5); }
+        .stat-icon.orange { background: linear-gradient(135deg, #FFB74D, #FFA726); }
+        .stat-icon.purple { background: linear-gradient(135deg, #BA68C8, #AB47BC); }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-info {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* Section de contenu selon le rôle */
+        .role-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .content-card h3 {
+            color: #2E7D32;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9f9f9;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #f57c00; }
+        .badge-danger { background: #ffebee; color: #c62828; }
+        .badge-info { background: #e3f2fd; color: #1976d2; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-radius: 50%;
+            border-top-color: #2E7D32;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #2E7D32, #66BB6A);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 968px) {
+            .role-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🌾</div>
+            <div class="header-title">
+                <h1>NBFO Coopérative</h1>
+                <p>Tableau de bord</p>
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar"></div>
+            <div class="user-details">
+                <div class="user-name" id="userName">Chargement...</div>
+                <div class="user-role" id="userRole"></div>
+            </div>
+            <button class="btn-logout" onclick="logout()">Déconnexion</button>
+        </div>
+    </div>
+
+    <!-- Conteneur principal -->
+    <div class="container">
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <h2 id="welcomeTitle">Bienvenue !</h2>
+            <p id="welcomeText">Chargement de vos informations...</p>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Chargement des statistiques...</p>
+            </div>
+        </div>
+
+        <!-- Contenu selon le rôle -->
+        <div class="role-content" id="roleContent">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales pour stocker les informations utilisateur
+        let currentUser = {
+            username: '',
+            role: '',
+            userId: null
+        };
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Récupérer les informations utilisateur depuis sessionStorage
+            const userInfo = sessionStorage.getItem('userInfo');
+            
+            if (!userInfo) {
+                // Si pas d'info utilisateur, rediriger vers la page de connexion
+                window.location.href = '/index.html';
+                return;
+            }
+
+            currentUser = JSON.parse(userInfo);
+            
+            // Afficher les informations utilisateur dans le header
+            displayUserInfo();
+            
+            // Charger le tableau de bord selon le rôle
+            await loadDashboard();
+        });
+
+        // Affichage des informations utilisateur
+        function displayUserInfo() {
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userRole').textContent = getRoleLabel(currentUser.role);
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            
+            // Message de bienvenue personnalisé
+            document.getElementById('welcomeTitle').textContent = `Bienvenue, ${currentUser.username} !`;
+            document.getElementById('welcomeText').textContent = getWelcomeMessage(currentUser.role);
+        }
+
+        // Obtenir le label du rôle en français
+        function getRoleLabel(role) {
+            const roles = {
+                'admin': 'Administrateur',
+                'caisse': 'Gestionnaire de caisse',
+                'stock': 'Gestionnaire de stock'
+            };
+            return roles[role] || 'Utilisateur';
+        }
+
+        // Message de bienvenue selon le rôle
+        function getWelcomeMessage(role) {
+            const messages = {
+                'admin': 'Vous avez accès à toutes les fonctionnalités de gestion de la coopérative.',
+                'caisse': 'Gérez les opérations de caisse et suivez les transactions des producteurs.',
+                'stock': 'Supervisez les stocks et les mouvements de produits dans les magasins.'
+            };
+            return messages[role] || 'Bienvenue sur votre tableau de bord.';
+        }
+
+        // Chargement du tableau de bord selon le rôle
+        async function loadDashboard() {
+            try {
+                // Charger les statistiques
+                await loadStatistics();
+                
+                // Charger le contenu spécifique au rôle
+                switch(currentUser.role) {
+                    case 'admin':
+                        await loadAdminDashboard();
+                        break;
+                    case 'caisse':
+                        await loadCaisseDashboard();
+                        break;
+                    case 'stock':
+                        await loadStockDashboard();
+                        break;
+                    default:
+                        loadDefaultDashboard();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement du tableau de bord:', error);
+                document.getElementById('roleContent').innerHTML = `
+                    <div class="content-card">
+                        <p style="color: #c62828;">Erreur lors du chargement des données. Veuillez rafraîchir la page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Chargement des statistiques générales
+        async function loadStatistics() {
+            const statsGrid = document.getElementById('statsGrid');
+            
+            try {
+                // Appels API pour récupérer les statistiques
+                const [lots, operations, stock, users] = await Promise.all([
+                    fetch('https://nbfo-coop.onrender.com/lots').then(r => r.json()),
+                    fetch('https://nbfo-coop.onrender.com/operations').then(r => r.json()),
+                    fetch('https://nbfo-coop.onrender.com/stock').then(r => r.json()),
+                    currentUser.role === 'admin' ? fetch('https://nbfo-coop.onrender.com/users').then(r => r.json()) : Promise.resolve([])
+                ]);
+
+                // Calcul des statistiques
+                const totalLots = lots.length;
+                const totalOperations = operations.length;
+                const soldeCaisse = operations.length > 0 ? operations[0].solde_apres : 0;
+                const totalUsers = users.length;
+
+                // Générer les cartes de statistiques selon le rôle
+                let statsHTML = '';
+
+                if (currentUser.role === 'admin') {
+                    statsHTML = `
+                        <div class="stat-card">
+                            <div class="stat-icon green">👥</div>
+                            <div class="stat-label">Utilisateurs</div>
+                            <div class="stat-value">${totalUsers}</div>
+                            <div class="stat-info">Comptes actifs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📦</div>
+                            <div class="stat-label">Lots enregistrés</div>
+                            <div class="stat-value">${totalLots}</div>
+                            <div class="stat-info">Total dans le système</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">💰</div>
+                            <div class="stat-label">Solde caisse</div>
+                            <div class="stat-value">${soldeCaisse.toLocaleString()}</div>
+                            <div class="stat-info">Unités internes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">🔄</div>
+                            <div class="stat-label">Opérations</div>
+                            <div class="stat-value">${totalOperations}</div>
+                            <div class="stat-info">Transactions totales</div>
+                        </div>
+                    `;
+                } else if (currentUser.role === 'caisse') {
+                    statsHTML = `
+                        <div class="stat-card">
+                            <div class="stat-icon orange">💰</div>
+                            <div class="stat-label">Solde actuel</div>
+                            <div class="stat-value">${soldeCaisse.toLocaleString()}</div>
+                            <div class="stat-info">Unités internes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">🔄</div>
+                            <div class="stat-label">Opérations</div>
+                            <div class="stat-value">${totalOperations}</div>
+                            <div class="stat-info">Total aujourd'hui</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📦</div>
+                            <div class="stat-label">Lots actifs</div>
+                            <div class="stat-value">${totalLots}</div>
+                            <div class="stat-info">En circulation</div>
+                        </div>
+                    `;
+                } else if (currentUser.role === 'stock') {
+                    const totalStock = stock.length;
+                    const entrees = stock.filter(s => s.type_mouvement === 'entree').length;
+                    const sorties = stock.filter(s => s.type_mouvement === 'sortie').length;
+                    
+                    statsHTML = `
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📦</div>
+                            <div class="stat-label">Mouvements total</div>
+                            <div class="stat-value">${totalStock}</div>
+                            <div class="stat-info">Entrées et sorties</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">⬇️</div>
+                            <div class="stat-label">Entrées</div>
+                            <div class="stat-value">${entrees}</div>
+                            <div class="stat-info">Réceptions de produits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">⬆️</div>
+                            <div class="stat-label">Sorties</div>
+                            <div class="stat-value">${sorties}</div>
+                            <div class="stat-info">Distributions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">📋</div>
+                            <div class="stat-label">Lots</div>
+                            <div class="stat-value">${totalLots}</div>
+                            <div class="stat-info">Lots disponibles</div>
+                        </div>
+                    `;
+                }
+
+                statsGrid.innerHTML = statsHTML;
+            } catch (error) {
+                console.error('Erreur chargement statistiques:', error);
+                statsGrid.innerHTML = '<p style="color: #c62828;">Erreur de chargement des statistiques</p>';
+            }
+        }
+
+        // Dashboard administrateur
+        async function loadAdminDashboard() {
+            const roleContent = document.getElementById('roleContent');
+            
+            try {
+                const [users, audit] = await Promise.all([
+                    fetch('https://nbfo-coop.onrender.com/users').then(r => r.json()),
+                    fetch('https://nbfo-coop.onrender.com/audit').then(r => r.json())
+                ]);
+
+                const recentUsers = users.slice(0, 5);
+                const recentAudit = audit.slice(0, 5);
+
+                roleContent.innerHTML = `
+                    <div class="content-card">
+                        <h3>👥 Utilisateurs récents</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom d'utilisateur</th>
+                                        <th>Rôle</th>
+                                        <th>Date de création</th>
+                                    </tr>
+         </thead>
+                                <tbody>
+                                    ${recentUsers.map(user => `
+                                        <tr>
+                                            <td>${user.username}</td>
+                                            <td><span class="badge badge-info">${getRoleLabel(user.role)}</span></td>
+                                            <td>${new Date(user.created_at).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>⚡ Actions rapides</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="window.location.href='/administration.html'">
+                                👨‍💼 Gérer les utilisateurs
+                            </button>
+                            <button class="action-btn" onclick="window.location.href='/caisse.html'">
+                                💰 Accéder à la caisse
+                            </button>
+                            <button class="action-btn" onclick="window.location.href='/stock.html'">
+                                📦 Gérer le stock
+                            </button>
+                            <button class="action-btn" onclick="viewAudit()">
+                                📋 Consulter l'audit
+                            </button>
+                        </div>
+                        <h3 style="margin-top: 30px;">📋 Activité récente</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Utilisateur</th>
+                                        <th>Action</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${recentAudit.map(a => `
+                                        <tr>
+                                            <td>${a.utilisateur}</td>
+                                            <td>${a.action}</td>
+                                            <td>${new Date(a.date_action).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erreur dashboard admin:', error);
+            }
+        }
+
+        // Dashboard caisse
+        async function loadCaisseDashboard() {
+            const roleContent = document.getElementById('roleContent');
+            
+            try {
+                const operations = await fetch('https://nbfo-coop.onrender.com/operations').then(r => r.json());
+                const recentOperations = operations.slice(0, 8);
+
+                roleContent.innerHTML = `
+                    <div class="content-card">
+                        <h3>💰 Dernières opérations</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Solde après</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${recentOperations.map(op => `
+                                        <tr>
+                                            <td>
+                                                <span class="badge ${op.type_operation === 'credit' ? 'badge-success' : 'badge-warning'}">
+                                                    ${op.type_operation === 'credit' ? '⬇️ Crédit' : '⬆️ Débit'}
+                                                </span>
+                                            </td>
+                                            <td>${op.montant.toLocaleString()}</td>
+                                            <td>${op.solde_apres.toLocaleString()}</td>
+                                            <td>${new Date(op.date_operation).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>⚡ Actions rapides</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="window.location.href='/caisse.html'">
+                                💰 Nouvelle opération
+                            </button>
+                            <button class="action-btn" onclick="viewOperations()">
+                                📊 Voir toutes les opérations
+                            </button>
+                            <button class="action-btn" onclick="viewCheques()">
+                                💳 Gérer les chèques
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erreur dashboard caisse:', error);
+            }
+        }
+
+        // Dashboard stock
+        async function loadStockDashboard() {
+            const roleContent = document.getElementById('roleContent');
+            
+            try {
+                const [stock, lots] = await Promise.all([
+                    fetch('https://nbfo-coop.onrender.com/stock').then(r => r.json()),
+                    fetch('https://nbfo-coop.onrender.com/lots').then(r => r.json())
+                ]);
+
+                const recentStock = stock.slice(0, 8);
+                const recentLots = lots.slice(0, 5);
+
+                roleContent.innerHTML = `
+                    <div class="content-card">
+                        <h3>📦 Mouvements récents</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Type</th>
+                                        <th>Quantité</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${recentStock.map(s => `
+                                        <tr>
+                                            <td>${s.produit}</td>
+                                            <td>
+                                                <span class="badge ${s.type_mouvement === 'entree' ? 'badge-success' : 'badge-warning'}">
+                                                    ${s.type_mouvement === 'entree' ? '⬇️ Entrée' : '⬆️ Sortie'}
+                                                </span>
+                                            </td>
+                                            <td>${s.quantite} ${s.unite}</td>
+                                            <td>${new Date(s.date_mouvement).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>⚡ Actions rapides</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="window.location.href='/stock.html'">
+                                📦 Nouveau mouvement
+                            </button>
+                            <button class="action-btn" onclick="viewLots()">
+                                📋 Consulter les lots
+                            </button>
+                            <button class="action-btn" onclick="viewStock()">
+                                📊 Voir tout le stock
+                            </button>
+                        </div>
+                        <h3 style="margin-top: 30px;">📋 Lots récents</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Quantité</th>
+                                        <th>Prix réf.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${recentLots.map(lot => `
+                                        <tr>
+                                            <td>${lot.description}</td>
+                                            <td>${lot.quantite} ${lot.unite}</td>
+                                            <td>${lot.prix_ref.toLocaleString()}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erreur dashboard stock:', error);
+            }
+        }
+
+        // Dashboard par défaut
+        function loadDefaultDashboard() {
+            const roleContent = document.getElementById('roleContent');
+            roleContent.innerHTML = `
+                <div class="content-card">
+                    <h3>Bienvenue sur votre espace</h3>
+                    <p>Votre tableau de bord est en cours de configuration.</p>
+                </div>
+            `;
+        }
+
+        // Fonctions utilitaires
+        function viewAudit() {
+            alert('Redirection vers la page d\'audit (à implémenter)');
+        }
+
+        function viewOperations() {
+            window.location.href = '/caisse.html';
+        }
+
+        function viewCheques() {
+            alert('Gestion des chèques (à implémenter)');
+        }
+
+        function viewLots() {
+            alert('Consultation des lots (à implémenter)');
+        }
+
+        function viewStock() {
+            window.location.href = '/stock.html';
+        }
+
+        // Déconnexion
+        function logout() {
+            sessionStorage.removeItem('userInfo');
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>

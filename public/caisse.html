@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caisse - NBFO Coopérative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #f57c00, #ff9800);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-dashboard {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-dashboard:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-logout {
+            background: rgba(244, 67, 54, 0.8);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Navigation tabs */
+        .nav-tabs {
+            background: white;
+            padding: 0 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 18px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            color: #f57c00;
+            background: #f9f9f9;
+        }
+
+        .nav-tab.active {
+            color: #f57c00;
+            border-bottom-color: #f57c00;
+            background: #f9f9f9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f57c00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Solde display */
+        .solde-display {
+            background: linear-gradient(135deg, #f57c00, #ff9800);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .solde-label {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .solde-value {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .solde-info {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Form styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f57c00;
+            box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f57c00, #ff9800);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 124, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43a047, #388e3c);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53935, #d32f2f);
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9f9f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-credit { background: #e8f5e9; color: #388e3c; }
+        .badge-debit { background: #fff3e0; color: #f57c00; }
+
+        /* Alert messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border: 1px solid #66bb6a;
+            color: #2e7d32;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            border: 1px solid #ef5350;
+            color: #c62828;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            border: 1px solid #ffa726;
+            color: #f57c00;
+        }
+
+        /* Stats cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #f57c00;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f57c00;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Loading spinner */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-radius: 50%;
+            border-top-color: #f57c00;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-tabs {
+                padding: 0 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">💰</div>
+            <div class="header-title">
+                <h1>Gestion de Caisse</h1>
+                <p>Opérations et transactions</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-dashboard" onclick="window.location.href='/dashboard.html'">
+                <span>🏠</span> Tableau de bord
+            </button>
+            <button class="btn-logout" onclick="logout()">Déconnexion</button>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="switchTab('operations')">
+            <span>💳</span> Opérations
+        </div>
+        <div class="nav-tab" onclick="switchTab('history')">
+            <span>📋</span> Historique
+        </div>
+        <div class="nav-tab" onclick="switchTab('cheques')">
+            <span>💵</span> Chèques
+        </div>
+        <div class="nav-tab" onclick="switchTab('reports')">
+            <span>📊</span> Rapports
+        </div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Affichage du solde -->
+        <div class="solde-display">
+            <div class="solde-label">Solde actuel de la caisse</div>
+            <div class="solde-value" id="soldeValue">0</div>
+            <div class="solde-info">Unités de crédit NBFO</div>
+        </div>
+
+        <!-- TAB: Opérations -->
+        <div id="tab-operations" class="tab-content active">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCredit">0</div>
+                    <div class="stat-label">Crédits aujourd'hui</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDebit">0</div>
+                    <div class="stat-label">Débits aujourd'hui</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalOperations">0</div>
+                    <div class="stat-label">Opérations aujourd'hui</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>➕</span> Nouvelle opération</h2>
+                </div>
+                <form id="operationForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="operationType">Type d'opération *</label>
+                            <select id="operationType" required>
+                                <option value="">Sélectionner</option>
+                                <option value="credit">⬇️ Crédit (Entrée)</option>
+                                <option value="debit">⬆️ Débit (Sortie)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="operationAmount">Montant *</label>
+                            <input type="number" id="operationAmount" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="operationProducteur">Producteur</label>
+                            <input type="text" id="operationProducteur" placeholder="Nom du producteur">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="operationDescription">Description</label>
+                        <textarea id="operationDescription" placeholder="Détails de l'opération..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💳</span> Enregistrer l'opération
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📋</span> Dernières opérations</h2>
+                    <button class="btn btn-secondary" onclick="loadOperations()">
+                        <span>🔄</span> Actualiser
+                    </button>
+                </div>
+                <div class="table-container" id="recentOperationsContainer">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Chargement des opérations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Historique -->
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📋</span> Historique complet</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="filterType" onchange="filterOperations()">
+                            <option value="all">Tous</option>
+                            <option value="credit">Crédits</option>
+                            <option value="debit">Débits</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="loadOperations()">
+                            <span>🔄</span> Actualiser
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container" id="historyTableContainer">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Chargement de l'historique...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Chèques -->
+        <div id="tab-cheques" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>💵</span> Enregistrer un chèque</h2>
+                </div>
+                <form id="chequeForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="chequeNumero">Numéro du chèque *</label>
+                            <input type="text" id="chequeNumero" required placeholder="Ex: 1234567">
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeBanque">Banque *</label>
+                            <input type="text" id="chequeBanque" required placeholder="Ex: Afriland First Bank">
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeMontant">Montant *</label>
+                            <input type="number" id="chequeMontant" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeEmetteur">Émetteur *</label>
+                            <input type="text" id="chequeEmetteur" required placeholder="Nom de l'émetteur">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💵</span> Enregistrer le chèque
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📋</span> Liste des chèques</h2>
+                    <button class="btn btn-secondary" onclick="loadCheques()">
+                        <span>🔄</span> Actualiser
+                    </button>
+                </div>
+                <div class="table-container" id="chequesTableContainer">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Chargement des chèques...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Rapports -->
+        <div id="tab-reports" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📊</span> Rapport de caisse</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="reportPeriod">Période</label>
+                        <select id="reportPeriod">
+                            <option value="today">Aujourd'hui</option>
+                            <option value="week">Cette semaine</option>
+                            <option value="month">Ce mois</option>
+                            <option value="year">Cette année</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <span>📄</span> Générer le rapport
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📈</span> Résumé des opérations</h2>
+                </div>
+                <div id="reportSummary">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Chargement du résumé...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allOperations = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            const userInfo = sessionStorage.getItem('userInfo');
+            if (!userInfo) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            currentUser = JSON.parse(userInfo);
+            
+            // Vérifier que l'utilisateur a accès à la caisse
+            if (currentUser.role !== 'caisse' && currentUser.role !== 'admin') {
+                showAlert('Accès refusé : vous devez être gestionnaire de caisse', 'error');
+                setTimeout(() => window.location.href = '/dashboard.html', 2000);
+                return;
+            }
+
+            // Charger les données
+            loadOperations();
+            loadCheques();
+            updateStats();
+        });
+
+        // Gestion des tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.closest('.nav-tab').classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Affichage des alertes
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // === GESTION DES OPÉRATIONS ===
+        document.getElementById('operationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const operationData = {
+                utilisateur: currentUser.username,
+                type_operation: document.getElementById('operationType').value,
+                montant: parseFloat(document.getElementById('operationAmount').value),
+                producteur: document.getElementById('operationProducteur').value,
+                description: document.getElementById('operationDescription').value
+            };
+
+            try {
+                const response = await fetch('/operations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(operationData)
+                });
+
+                if (response.ok) {
+                    showAlert('Opération enregistrée avec succès', 'success');
+                    e.target.reset();
+                    loadOperations();
+                    updateStats();
+                } else {
+                    showAlert('Erreur lors de l\'enregistrement', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur de connexion', 'error');
+            }
+        });
+
+        async function loadOperations() {
+            const recentContainer = document.getElementById('recentOperationsContainer');
+            const historyContainer = document.getElementById('historyTableContainer');
+            
+            try {
+                const response = await fetch('/operations');
+                allOperations = await response.json();
+
+                if (allOperations.length === 0) {
+                    const emptyMsg = '<p style="text-align: center; color: #999; padding: 40px;">Aucune opération enregistrée</p>';
+                    recentContainer.innerHTML = emptyMsg;
+                    historyContainer.innerHTML = emptyMsg;
+                    return;
+                }
+
+                // Mettre à jour le solde
+                document.getElementById('soldeValue').textContent = 
+                    allOperations[0].solde_apres.toLocaleString('fr-FR');
+
+                // Afficher les 10 dernières opérations
+                const recentOps = allOperations.slice(0, 10);
+                const recentHTML = generateOperationsTable(recentOps);
+                recentContainer.innerHTML = recentHTML;
+
+                // Afficher tout l'historique
+                const historyHTML = generateOperationsTable(allOperations);
+                historyContainer.innerHTML = historyHTML;
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                const errorMsg = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
+                recentContainer.innerHTML = errorMsg;
+                historyContainer.innerHTML = errorMsg;
+            }
+        }
+
+        function generateOperationsTable(operations) {
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Montant</th>
+                            <th>Solde après</th>
+                            <th>Utilisateur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${operations.map(op => `
+                            <tr>
+                                <td>${new Date(op.date_operation).toLocaleString('fr-FR')}</td>
+                                <td>
+                                    <span class="badge badge-${op.type_operation}">
+                                        ${op.type_operation === 'credit' ? '⬇️ Crédit' : '⬆️ Débit'}
+                                    </span>
+                                </td>
+                                <td style="font-weight: 600;">${op.montant.toLocaleString('fr-FR')}</td>
+                                <td>${op.solde_apres.toLocaleString('fr-FR')}</td>
+                                <td>${op.utilisateur}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function filterOperations() {
+            const filterType = document.getElementById('filterType').value;
+            let filtered = allOperations;
+
+            if (filterType !== 'all') {
+                filtered = allOperations.filter(op => op.type_operation === filterType);
+            }
+
+            const historyContainer = document.getElementById('historyTableContainer');
+            historyContainer.innerHTML = generateOperationsTable(filtered);
+        }
+
+        async function updateStats() {
+            try {
+                const response = await fetch('/operations');
+                const operations = await response.json();
+
+                const today = new Date().toDateString();
+                const todayOps = operations.filter(op => 
+                    new Date(op.date_operation).toDateString() === today
+                );
+
+                const totalCredit = todayOps
+                    .filter(op => op.type_operation === 'credit')
+                    .reduce((sum, op) => sum + parseFloat(op.montant), 0);
+
+                const totalDebit = todayOps
+                    .filter(op => op.type_operation === 'debit')
+                    .reduce((sum, op) => sum + parseFloat(op.montant), 0);
+
+                document.getElementById('totalCredit').textContent = totalCredit.toLocaleString('fr-FR');
+                document.getElementById('totalDebit').textContent = totalDebit.toLocaleString('fr-FR');
+                document.getElementById('totalOperations').textContent = todayOps.length;
+
+            } catch (error) {
+                console.error('Erreur stats:', error);
+            }
+        }
+
+        // === GESTION DES CHÈQUES ===
+        document.getElementById('chequeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const chequeData = {
+                numero_cheque: document.getElementById('chequeNumero').value,
+                banque: document.getElementById('chequeBanque').value,
+                montant: parseFloat(document.getElementById('chequeMontant').value),
+                emetteur: document.getElementById('chequeEmetteur').value,
+                utilisateur: currentUser.username
+            };
+
+            try {
+                const response = await fetch('/cheques', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chequeData)
+                });
+
+                if (response.ok) {
+                    showAlert('Chèque enregistré avec succès', 'success');
+                    e.target.reset();
+                    loadCheques();
+                } else {
+                    showAlert('Erreur lors de l\'enregistrement', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur de connexion', 'error');
+            }
+        });
+
+        async function loadCheques() {
+            const container = document.getElementById('chequesTableContainer');
+            
+            try {
+                const response = await fetch('/cheques');
+                const cheques = await response.json();
+
+                if (cheques.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun chèque enregistré</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Numéro</th>
+                                <th>Banque</th>
+                                <th>Montant</th>
+                                <th>Émetteur</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cheques.map(ch => `
+                                <tr>
+                                    <td>${ch.numero_cheque}</td>
+                                    <td>${ch.banque}</td>
+                                    <td style="font-weight: 600;">${ch.montant.toLocaleString('fr-FR')}</td>
+                                    <td>${ch.emetteur || ch.utilisateur}</td>
+                                    <td>${new Date(ch.date_enregistrement).toLocaleDateString('fr-FR')}</td>
+                                    <td><span class="badge badge-credit">En attente</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
+            }
+        }
+
+        // === RAPPORTS ===
+        function generateReport() {
+            const period = document.getElementById('reportPeriod').value;
+            showAlert(`Génération du rapport pour la période: ${period}`, 'success');
+            loadReportSummary();
+        }
+
+        async function loadReportSummary() {
+            const container = document.getElementById('reportSummary');
+            
+            try {
+                const response = await fetch('/operations');
+                const operations = await response.json();
+
+                const totalCredit = operations
+                    .filter(op => op.type_operation === 'credit')
+                    .reduce((sum, op) => sum + parseFloat(op.montant), 0);
+
+                const totalDebit = operations
+                    .filter(op => op.type_operation === 'debit')
+                    .reduce((sum, op) => sum + parseFloat(op.montant), 0);
+
+                const balance = totalCredit - totalDebit;
+
+                container.innerHTML = `
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: #388e3c;">${totalCredit.toLocaleString('fr-FR')}</div>
+                            <div class="stat-label">Total des crédits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: #d32f2f;">${totalDebit.toLocaleString('fr-FR')}</div>
+                            <div class="stat-label">Total des débits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: #1976d2;">${balance.toLocaleString('fr-FR')}</div>
+                            <div class="stat-label">Balance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${operations.length}</div>
+                            <div class="stat-label">Total opérations</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<p style="color: #c62828;">Erreur de chargement du résumé</p>';
+            }
+        }
+
+        // Déconnexion
+        function logout() {
+            sessionStorage.removeItem('userInfo');
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>
