@@ -484,74 +484,94 @@
             </div>
         </div>
 
-        <!-- TAB: Mouvements -->
-        <div id="tab-mouvements" class="tab-content active">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>➕</span> Nouveau mouvement</h2>
-                </div>
-                <form id="mouvementForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="produit">Produit *</label>
-                            <input type="text" id="produit" required placeholder="Ex: Banane plantain">
-                        </div>
-                        <div class="form-group">
-                            <label for="typeMouvement">Type de mouvement *</label>
-                            <select id="typeMouvement" required>
-                                <option value="">Sélectionner</option>
-                                <option value="entree">⬇️ Entrée</option>
-                                <option value="sortie">⬆️ Sortie</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantite">Quantité *</label>
-                            <input type="number" id="quantite" required min="0" step="0.01" placeholder="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="unite">Unité *</label>
-                            <select id="unite" required>
-                                <option value="">Sélectionner</option>
-                                <option value="kg">Kilogrammes (kg)</option>
-                                <option value="g">Grammes (g)</option>
-                                <option value="L">Litres (L)</option>
-                                <option value="unité">Unités</option>
-                                <option value="sac">Sacs</option>
-                                <option value="caisse">Caisses</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="lotId">Lot associé</label>
-                            <select id="lotId">
-                                <option value="">Chargement...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="magasin">Magasin</label>
-                            <input type="text" id="magasin" placeholder="Ex: Magasin principal">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <span>📦</span> Enregistrer le mouvement
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><span>📋</span> Historique des mouvements</h2>
-                    <button class="btn btn-secondary" onclick="loadStock()">
-                        <span>🔄</span> Actualiser
-                    </button>
-                </div>
-                <div class="table-container" id="stockTableContainer">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <p>Chargement des mouvements...</p>
-                    </div>
-                </div>
-            </div>
+<!-- TAB: Admission -->
+<div id="tab-mouvements" class="tab-content active">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><span>📥</span> Admission d’un nouveau lot</h2>
+    </div>
+    <form id="admissionForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nomProducteur">Nom du producteur *</label>
+          <input type="text" id="nomProducteur" required placeholder="Ex: Mme Tchoumba">
         </div>
+        <div class="form-group">
+          <label for="telProducteur">Téléphone *</label>
+          <input type="text" id="telProducteur" required placeholder="Ex: 690123456">
+        </div>
+        <div class="form-group">
+          <label for="qte">Quantité *</label>
+          <input type="number" id="qte" required min="0" step="0.01" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="prixRef">Prix de référence *</label>
+          <input type="number" id="prixRef" required min="0" step="0.01" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="qualite">Qualité *</label>
+          <select id="qualite" required>
+            <option value="A">A (standard)</option>
+            <option value="B">B (moyenne)</option>
+            <option value="C">C (faible)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="categorieLot">Catégorie *</label>
+          <select id="categorieLot" required>
+            <option value="secs">Produits secs</option>
+            <option value="frais">Produits frais</option>
+            <option value="sensible">Produits sensibles</option>
+            <option value="manualim">Manuf. alimentaires</option>
+            <option value="nonalim">Non alimentaires</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Valeur brute</label>
+          <div id="valBrute">0</div>
+        </div>
+        <div class="form-group">
+          <label>Coef qualité</label>
+          <div id="coefQualite">1.00</div>
+        </div>
+        <div class="form-group">
+          <label>Valeur estimée</label>
+          <div id="valEstimee">0</div>
+        </div>
+        <div class="form-group">
+          <label>Taux de taxe</label>
+          <div id="tauxTax">10%</div>
+        </div>
+        <div class="form-group">
+          <label>Montant attribué</label>
+          <div id="montantAttribue">0</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <span>✅</span> Enregistrer l’admission
+      </button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title"><span>📋</span> Lots enregistrés</h2>
+      <button class="btn btn-secondary" onclick="loadLots()">
+        <span>🔄</span> Actualiser
+      </button>
+    </div>
+    <div class="table-container" id="lotsTableContainer">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Chargement des lots...</p>
+      </div>
+    </div>
+  </div>
+</div>
 
         <!-- TAB: Lots -->
         <div id="tab-lots" class="tab-content">
@@ -740,41 +760,6 @@
             }, 5000);
         }
 
-        // === GESTION DES MOUVEMENTS ===
-        document.getElementById('mouvementForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const mouvementData = {
-                produit: document.getElementById('produit').value,
-                type_mouvement: document.getElementById('typeMouvement').value,
-                quantite: parseFloat(document.getElementById('quantite').value),
-                unite: document.getElementById('unite').value,
-                lot_id: document.getElementById('lotId').value || null,
-                magasin: document.getElementById('magasin').value,
-                utilisateur: currentUser.username
-            };
-
-            try {
-                const response = await fetch('/stock', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(mouvementData)
-                });
-
-                if (response.ok) {
-                    showAlert('Mouvement enregistré avec succès', 'success');
-                    e.target.reset();
-                    loadStock();
-                    updateStats();
-                } else {
-                    showAlert('Erreur lors de l\'enregistrement', 'error');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-                showAlert('Erreur de connexion', 'error');
-            }
-        });
-
         async function loadStock() {
             const container = document.getElementById('stockTableContainer');
             
@@ -833,6 +818,132 @@
                 console.error('Erreur:', error);
             }
         }
+
+        // === Paramètres de calcul ===
+const TAXBYCAT = {
+  frais: 0.25, court: 0.25, secs: 0.10, manualim: 0.10, nonalim: 0.10, sensible: 0.25
+};
+const QUAL_COEF = { A:1.00, B:0.95, C:0.90 };
+
+// === Éléments du formulaire ===
+const qteEl = document.getElementById('qte');
+const prixRefEl = document.getElementById('prixRef');
+const qualiteEl = document.getElementById('qualite');
+const categorieEl = document.getElementById('categorieLot');
+
+const valBruteEl = document.getElementById('valBrute');
+const coefQualiteEl = document.getElementById('coefQualite');
+const valEstimeeEl = document.getElementById('valEstimee');
+const tauxTaxEl = document.getElementById('tauxTax');
+const montantAttribueEl = document.getElementById('montantAttribue');
+
+// === Calcul dynamique ===
+function recompute() {
+  const qte = parseFloat(qteEl.value || 0);
+  const prix = parseFloat(prixRefEl.value || 0);
+  const qual = QUAL_COEF[qualiteEl.value || 'A'];
+  const cat = categorieEl.value || 'secs';
+  const tax = TAXBYCAT[cat];
+
+  const brut = qte * prix;
+  const estimee = brut * qual;
+  const attribue = Math.round(estimee * (1 - tax));
+
+  valBruteEl.textContent = brut.toLocaleString('fr-FR');
+  coefQualiteEl.textContent = qual.toFixed(2);
+  valEstimeeEl.textContent = estimee.toLocaleString('fr-FR');
+  tauxTaxEl.textContent = Math.round(tax * 100) + '%';
+  montantAttribueEl.textContent = attribue.toLocaleString('fr-FR');
+}
+[qteEl, prixRefEl, qualiteEl, categorieEl].forEach(el => el.addEventListener('input', recompute));
+
+// === Extraire les données du formulaire ===
+function getFormData() {
+  const data = {
+    nomProducteur: document.getElementById('nomProducteur').value.trim(),
+    telProducteur: document.getElementById('telProducteur').value.trim(),
+    qte: parseFloat(qteEl.value || 0),
+    prixRef: parseFloat(prixRefEl.value || 0),
+    qualite: qualiteEl.value || 'A',
+    categorieLot: categorieEl.value || 'secs'
+  };
+  const qual = QUAL_COEF[data.qualite];
+  const tax = TAXBYCAT[data.categorieLot];
+  const brut = data.qte * data.prixRef;
+  const estimee = brut * qual;
+  const attribue = Math.round(estimee * (1 - tax));
+  return { data, brut, qual, tax, estimee, attribue };
+}
+
+// === Soumission du formulaire ===
+document.getElementById('admissionForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const { data } = getFormData();
+
+  try {
+    const resp = await fetch('/lots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (resp.ok) {
+      showAlert('Lot admis avec succès. Recette virtuelle enregistrée.', 'success');
+      e.target.reset();
+      recompute();
+      loadLots();
+    } else {
+      showAlert('Erreur lors de l\'admission du lot.', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert('Erreur réseau ou serveur.', 'error');
+  }
+});
+
+// === Chargement des lots enregistrés ===
+async function loadLots() {
+  const container = document.getElementById('lotsTableContainer');
+  try {
+    const resp = await fetch('/lots');
+    const lots = await resp.json();
+
+    if (lots.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">Aucun lot enregistré</p>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producteur</th>
+            <th>Catégorie</th>
+            <th>Quantité</th>
+            <th>Valeur estimée</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lots.map(lot => `
+            <tr>
+              <td>${lot.id}</td>
+              <td>${lot.producteur}</td>
+              <td>${lot.categorie}</td>
+              <td>${lot.quantite}</td>
+              <td>${lot.val_estimee.toLocaleString('fr-FR')}</td>
+              <td><span class="badge badge-credit">${lot.statut || 'Enregistré'}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = '<p style="color:#c62828; text-align:center; padding:40px;">Erreur de chargement</p>';
+  }
+}
 
         // === INVENTAIRE ===
         async function loadInventaire() {
