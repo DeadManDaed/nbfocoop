@@ -568,15 +568,100 @@
     <div id="tab-lots" class="tab-content">
       <div class="card">
         <div class="card-header"><h2 class="card-title"><span>➕</span> Créer un lot</h2></div>
-        <form id="lotForm"> ... </form>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2 class="card-title"><span>📋</span> Liste des lots</h2></div>
-        <div class="table-container" id="lotsTableContainer">
-          <div class="loading"><div class="loading-spinner"></div><p>Chargement des lots...</p></div>
+        <form id="lotForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nomProducteur">Nom du producteur *</label>
+                            <input type="text" id="nomProducteur" required placeholder="Ex: Koné Martin">
+                        </div>
+                        <div class="form-group">
+                            <label for="telProducteur">Téléphone *</label>
+                            <input type="tel" id="telProducteur" required placeholder="+237 6XX XX XX XX">
+                        </div>
+                        <div class="form-group">
+                            <label for="typeProducteur">Type de producteur *</label>
+                            <select id="typeProducteur" required>
+                                <option value="">Sélectionner</option>
+                                <option value="agriculteur">Agriculteur</option>
+                                <option value="eleveur">Éleveur</option>
+                                <option value="artisan">Artisan</option>
+                                <option value="transformateur">Transformateur</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="categorie">Catégorie *</label>
+                            <select id="categorie" required>
+                                <option value="">Sélectionner</option>
+                                <option value="fruits">Fruits</option>
+                                <option value="legumes">Légumes</option>
+                                <option value="cereales">Céréales</option>
+                                <option value="tubercules">Tubercules</option>
+                                <option value="artisanat">Artisanat</option>
+                                <option value="elevage">Élevage</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <input type="text" id="description" required placeholder="Description du produit">
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="quantiteLot">Quantité *</label>
+                            <input type="number" id="quantiteLot" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="uniteLot">Unité *</label>
+                            <select id="uniteLot" required>
+                                <option value="kg">kg</option>
+                                <option value="g">g</option>
+                                <option value="L">L</option>
+                                <option value="unité">unité</option>
+                                <option value="sac">sac</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prixRef">Prix de référence *</label>
+                            <input type="number" id="prixRef" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualite">Qualité</label>
+                            <select id="qualite">
+                                <option value="excellente">Excellente</option>
+                                <option value="bonne">Bonne</option>
+                                <option value="moyenne">Moyenne</option>
+                            </select>
+</div>
+                        <div class="form-group">
+                            <label for="dateReception">Date de réception</label>
+                            <input type="date" id="dateReception">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateExpiration">Date d'expiration</label>
+                            <input type="date" id="dateExpiration">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>📦</span> Créer le lot
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span>📋</span> Liste des lots</h2>
+                    <button class="btn btn-secondary" onclick="loadLots()">
+                        <span>🔄</span> Actualiser
+                    </button>
+                </div>
+                <div class="table-container" id="lotsTableContainer">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Chargement des lots...</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
     <!-- TAB: Inventaire -->
     <div id="tab-inventaire" class="tab-content">
