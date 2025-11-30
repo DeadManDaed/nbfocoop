@@ -630,17 +630,23 @@
                             <label for="producerType">Type *</label>
                             <select id="producerType" required>
                                 <option value="agriculteur">Agriculteur</option>
-    <option value="éleveur">Éleveur</option>
-    <option value="pêcheur">Pêcheur</option>
-    <option value="artisan">Artisan</option>
-    <option value="alimentaire manufacture">Alimentaire manufacture</option>
-    <option value="coopérative">Coopérative</option>
-    <option value="autre">Autre</option>
+                                <option value="éleveur">Éleveur</option>
+                                <option value="pêcheur">Pêcheur</option>
+                                <option value="artisan">Artisan</option>
+                                <option value="alimentaire manufacture">Alimentaire manufacture</option>
+                                <option value="coopérative">Coopérative</option>
+                                <option value="autre">Autre</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="producerRegion">Région *</label>
-                            <input type="text" id="producerRegion" required placeholder="Ex: Ouest">
+                        <div class="form-group">                                               
+                            <label>Région :</label>
+                            <select id="region"></select>
+                            <label> Département </label>
+                            <select id="departement"></select>
+                            <label>Arrondissement :</label>
+                            <select id="arrondissement"></select>
+                            <label>Détenteur de carte :</label>
+                            <input type="checkbox" id="carteMembre" />                      
                         </div>
                     </div>
                     <div class="form-group">
@@ -735,7 +741,7 @@ document.getElementById('producteurForm').addEventListener('submit', async (e) =
   };
 
   try {
-    const response = await fetch('/api/producteurs', {
+    const response = await fetch('/producteurs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
