@@ -1158,6 +1158,69 @@ document.getElementById('departement').addEventListener('change', async (e) => {
     arrSelect.appendChild(opt);
   });
 });
+            async function loadProducers() {
+            const container = document.getElementById('producersTableContainer');
+            
+            try {
+                const response = await fetch('/api/producers');
+                const producers = await response.json();
+
+                if (producers.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun producteur enregistré</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Téléphone</th>
+                                <th>Type</th>
+                                <th>Région</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${producers.map(p => `
+                                <tr>
+                                    <td>${p.nom_producteur}</td>
+                                    <td>${p.tel_producteur}</td>
+                                    <td><span class="badge badge-stock">${p.type_producteur}</span></td>
+                                    <td>${p.region || '-'}</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="btn-icon btn-secondary" onclick="editProducer(${p.id})" title="Modifier">✏️</button>
+                                            <button class="btn-icon btn-danger" onclick="deleteProducer(${p.id})" title="Supprimer">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
+            }
+        }
+
+        function editProducer(id) {
+            alert('Fonction de modification à implémenter - ID: ' + id);
+        }
+
+        async function deleteProducer(id) {
+            if (!confirm('Supprimer ce producteur ?')) return;
+            
+            try {
+                const response = await fetch(`/api/producers/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showAlert('Producteur supprimé', 'success');
+                    loadProducers();
+                }
+            } catch (error) {
+                showAlert('Erreur de suppression', 'error');
+            }
+        }
 
 // Soumission du formulaire producteur
 document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
