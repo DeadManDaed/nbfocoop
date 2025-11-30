@@ -674,88 +674,7 @@
                 </div>
             </div>
         </div>
-<script> 
-    // Remplissage dynamique des listes Région → Département → Arrondissement
-const regions = {
-  "Centre": {
-    "Mfoundi": ["Yaoundé 1", "Yaoundé 2", "Yaoundé 3"],
-    "Lekié": ["Monatélé", "Obala"]
-  },
-  "Nord": {
-    "Bénoué": ["Garoua 1", "Garoua 2"],
-    "Mayo-Louti": ["Guider"]
-  }
-};
-
-// Charger les régions au démarrage
-fetch('/api/regions')
-  .then(res => res.json())
-  .then(regions => {
-    const regionSelect = document.getElementById('region');
-    regions.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id;
-      opt.textContent = r.nom;
-      regionSelect.appendChild(opt);
-    });
-  });
-
-// Quand une région est choisie → charger les départements
-document.getElementById('regionSelect').addEventListener('change', async (e) => {
-  const depSelect = document.getElementById('departement');
-  depSelect.innerHTML = '';
-  const res = await fetch(`/api/departements/${e.target.value}`);
-  const deps = await res.json();
-  deps.forEach(d => {
-    const opt = document.createElement('option');
-    opt.value = d.id;
-    opt.textContent = d.nom;
-    depSelect.appendChild(opt);
-  });
-});
-
-// Quand un département est choisi → charger les arrondissements
-document.getElementById('departementSelect').addEventListener('change', async (e) => {
-  const arrSelect = document.getElementById('arrondissement');
-  arrSelect.innerHTML = '';
-  const res = await fetch(`/api/arrondissements/${e.target.value}`);
-  const arrs = await res.json();
-  arrs.forEach(a => {
-    const opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.nom;
-    arrSelect.appendChild(opt);
-  });
-});
-
-// Soumission du formulaire producteur
-document.getElementById('producteurForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const data = {
-    nom: document.getElementById('nomProducteur').value.trim(),
-    telephone: document.getElementById('telProducteur').value.trim(),
-    type: document.getElementById('typeProducteur').value,
-    region: regionSelect.value,
-    departement: depSelect.value,
-    arrondissement: arrSelect.value,
-    carteMembre: document.getElementById('carteMembre').checked
-  };
-  try {
-    const response = await fetch('/producteurs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-    alert(result.message);
-  } catch (err) {
-    console.error('Erreur lors de l\'enregistrement du producteur', err);
-    alert('Impossible d\'enregistrer le producteur.');
-  }
-});
-</script>
+        
         <!-- TAB: Validation -->
         <div id="tab-validation" class="tab-content">
             <div class="stats-row">
@@ -1106,11 +1025,10 @@ function getRoleLabel(role) {
         document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const producerData = {
+  /*          const producerData = {
                 nom_producteur: document.getElementById('producerName').value,
                 tel_producteur: document.getElementById('producerPhone').value,
                 type_producteur: document.getElementById('producerType').value,
-                region: document.getElementById('producerRegion').value,
                 produits: document.getElementById('producerProducts').value,
                 utilisateur: currentUser.username
             };
@@ -1197,13 +1115,83 @@ function getRoleLabel(role) {
                 showAlert('Erreur de suppression', 'error');
             }
         }
+*/
 
+    // Remplissage dynamique des listes Région → Département → Arrondissement
+// Charger les régions au démarrage
+fetch('/regions')
+  .then(res => res.json())
+  .then(regions => {
+    const regionSelect = document.getElementById('region');
+    regions.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.id;
+      opt.textContent = r.nom;
+      regionSelect.appendChild(opt);
+    });
+  });
+
+// Quand une région est choisie → charger les départements
+document.getElementById('regionSelect').addEventListener('change', async (e) => {
+  const depSelect = document.getElementById('departement');
+  depSelect.innerHTML = '';
+  const res = await fetch(`/departements/${e.target.value}`);
+  const deps = await res.json();
+  deps.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.id;
+    opt.textContent = d.nom;
+    depSelect.appendChild(opt);
+  });
+});
+
+// Quand un département est choisi → charger les arrondissements
+document.getElementById('departementSelect').addEventListener('change', async (e) => {
+  const arrSelect = document.getElementById('arrondissement');
+  arrSelect.innerHTML = '';
+  const res = await fetch(`/arrondissements/${e.target.value}`);
+  const arrs = await res.json();
+  arrs.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = a.nom;
+    arrSelect.appendChild(opt);
+  });
+});
+
+// Soumission du formulaire producteur
+document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nom: document.getElementById('nomProducteur').value.trim(),
+    telephone: document.getElementById('telProducteur').value.trim(),
+    type: document.getElementById('typeProducteur').value,
+    region: regionSelect.value,
+    departement: depSelect.value,
+    arrondissement: arrSelect.value,
+    carteMembre: document.getElementById('carteMembre').checked
+  };
+  try {
+    const response = await fetch('/producteurs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    alert(result.message);
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement du producteur', err);
+    alert('Impossible d\'enregistrer le producteur.');
+  }
+});
         // === GESTION DES VALIDATIONS ===
         async function loadValidations() {
             const container = document.getElementById('validationsTableContainer');
             
             try {
-                const response = await fetch('/api/validations');
+                const response = await fetch('/validations');
                 const validations = await response.json();
 
                 const pending = validations.filter(v => v.status === 'pending').length;
@@ -1257,7 +1245,7 @@ function getRoleLabel(role) {
 
         async function approveValidation(id) {
             try {
-                const response = await fetch(`/api/validations/${id}/approve`, { method: 'POST' });
+                const response = await fetch(`/validations/${id}/approve`, { method: 'POST' });
                 if (response.ok) {
                     showAlert('Modification validée', 'success');
                     loadValidations();
@@ -1272,7 +1260,7 @@ function getRoleLabel(role) {
             if (!reason) return;
             
             try {
-                const response = await fetch(`/api/validations/${id}/reject`, {
+                const response = await fetch(`/validations/${id}/reject`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ reason })
