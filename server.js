@@ -166,6 +166,10 @@ app.delete('/users/:id', async (req, res) => {
 });
 
 /* =========================
+   Routes admission
+   ========================= */
+
+/* =========================
    Routes Lots
    ========================= */
 app.post('/lots', async (req, res) => {
