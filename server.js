@@ -128,6 +128,47 @@ app.post('/api/login', async (req, res) => {
 });
 
 /* =========================
+   Routes localités 
+   ========================= */
+// Charger toutes les régions
+app.get('/regions', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, nom FROM regions ORDER BY nom');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur lors du chargement des régions' });
+  }
+});
+
+// Charger les départements d’une région
+app.get('/departements/:regionId', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nom FROM departements WHERE region_id = $1 ORDER BY nom',
+      [req.params.regionId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur lors du chargement des départements' });
+  }
+});
+
+// Charger les arrondissements d’un département
+app.get('/arrondissements/:departementId', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nom FROM arrondissements WHERE departement_id = $1 ORDER BY nom',
+      [req.params.departementId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur lors du chargement des arrondissements' });
+  }
+});
+/* =========================
    Routes Users
    ========================= */
 app.post('/users', async (req, res) => {
