@@ -687,41 +687,43 @@ const regions = {
   }
 };
 
-// Initialisation des sélecteurs
-const regionSelect = document.getElementById('region');
-const depSelect = document.getElementById('departement');
-const arrSelect = document.getElementById('arrondissement');
+// Charger les régions au démarrage
+fetch('/api/regions')
+  .then(res => res.json())
+  .then(regions => {
+    const regionSelect = document.getElementById('region');
+    regions.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.id;
+      opt.textContent = r.nom;
+      regionSelect.appendChild(opt);
+    });
+  });
 
-// Charger les régions
-Object.keys(regions).forEach(r => {
-  const opt = document.createElement('option');
-  opt.value = r;
-  opt.textContent = r;
-  regionSelect.appendChild(opt);
-});
-
-// Mettre à jour départements quand une région est choisie
-regionSelect.addEventListener('change', () => {
+// Quand une région est choisie → charger les départements
+document.getElementById('regionSelect').addEventListener('change', async (e) => {
+  const depSelect = document.getElementById('departement');
   depSelect.innerHTML = '';
-  arrSelect.innerHTML = '';
-  const deps = regions[regionSelect.value];
-  Object.keys(deps).forEach(d => {
+  const res = await fetch(`/api/departements/${e.target.value}`);
+  const deps = await res.json();
+  deps.forEach(d => {
     const opt = document.createElement('option');
-    opt.value = d;
-    opt.textContent = d;
+    opt.value = d.id;
+    opt.textContent = d.nom;
     depSelect.appendChild(opt);
   });
 });
 
-// Mettre à jour arrondissements quand un département est choisi
-depSelect.addEventListener('change', () => {
+// Quand un département est choisi → charger les arrondissements
+document.getElementById('departementSelect').addEventListener('change', async (e) => {
+  const arrSelect = document.getElementById('arrondissement');
   arrSelect.innerHTML = '';
-  const deps = regions[regionSelect.value];
-  const arrs = deps[depSelect.value];
+  const res = await fetch(`/api/arrondissements/${e.target.value}`);
+  const arrs = await res.json();
   arrs.forEach(a => {
     const opt = document.createElement('option');
-    opt.value = a;
-    opt.textContent = a;
+    opt.value = a.id;
+    opt.textContent = a.nom;
     arrSelect.appendChild(opt);
   });
 });
@@ -739,7 +741,6 @@ document.getElementById('producteurForm').addEventListener('submit', async (e) =
     arrondissement: arrSelect.value,
     carteMembre: document.getElementById('carteMembre').checked
   };
-
   try {
     const response = await fetch('/producteurs', {
       method: 'POST',
