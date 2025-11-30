@@ -789,6 +789,7 @@
         </div>
     </div>
 
+    
     <script>
         let currentUser = null;
 
@@ -808,7 +809,18 @@
                 setTimeout(() => window.location.href = '/dashboard.html', 2000);
                 return;
             }
-
+// Charger les régions au démarrage
+fetch('/regions')
+  .then(res => res.json())
+  .then(regions => {
+    const regionSelect = document.getElementById('region');
+    regions.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.id;
+      opt.textContent = r.nom;
+      regionSelect.appendChild(opt);
+    });
+  });
             // Charger les données initiales
             loadUsers();
             loadMessages();
@@ -1118,21 +1130,9 @@ function getRoleLabel(role) {
 */
 
     // Remplissage dynamique des listes Région → Département → Arrondissement
-// Charger les régions au démarrage
-fetch('/regions')
-  .then(res => res.json())
-  .then(regions => {
-    const regionSelect = document.getElementById('region');
-    regions.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id;
-      opt.textContent = r.nom;
-      regionSelect.appendChild(opt);
-    });
-  });
-
+            
 // Quand une région est choisie → charger les départements
-document.getElementById('regionSelect').addEventListener('change', async (e) => {
+document.getElementById('region').addEventListener('change', async (e) => {
   const depSelect = document.getElementById('departement');
   depSelect.innerHTML = '';
   const res = await fetch(`/departements/${e.target.value}`);
@@ -1146,7 +1146,7 @@ document.getElementById('regionSelect').addEventListener('change', async (e) => 
 });
 
 // Quand un département est choisi → charger les arrondissements
-document.getElementById('departementSelect').addEventListener('change', async (e) => {
+document.getElementById('departement').addEventListener('change', async (e) => {
   const arrSelect = document.getElementById('arrondissement');
   arrSelect.innerHTML = '';
   const res = await fetch(`/arrondissements/${e.target.value}`);
