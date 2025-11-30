@@ -462,6 +462,7 @@
             }
         }
     </style>
+    <script src="js/administration.js" defer></script>
 </head>
 <body>
     <!-- Header -->
@@ -667,7 +668,87 @@
                 </div>
             </div>
         </div>
+<script> 
+    // Remplissage dynamique des listes Région → Département → Arrondissement
+const regions = {
+  "Centre": {
+    "Mfoundi": ["Yaoundé 1", "Yaoundé 2", "Yaoundé 3"],
+    "Lekié": ["Monatélé", "Obala"]
+  },
+  "Nord": {
+    "Bénoué": ["Garoua 1", "Garoua 2"],
+    "Mayo-Louti": ["Guider"]
+  }
+};
 
+// Initialisation des sélecteurs
+const regionSelect = document.getElementById('region');
+const depSelect = document.getElementById('departement');
+const arrSelect = document.getElementById('arrondissement');
+
+// Charger les régions
+Object.keys(regions).forEach(r => {
+  const opt = document.createElement('option');
+  opt.value = r;
+  opt.textContent = r;
+  regionSelect.appendChild(opt);
+});
+
+// Mettre à jour départements quand une région est choisie
+regionSelect.addEventListener('change', () => {
+  depSelect.innerHTML = '';
+  arrSelect.innerHTML = '';
+  const deps = regions[regionSelect.value];
+  Object.keys(deps).forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    depSelect.appendChild(opt);
+  });
+});
+
+// Mettre à jour arrondissements quand un département est choisi
+depSelect.addEventListener('change', () => {
+  arrSelect.innerHTML = '';
+  const deps = regions[regionSelect.value];
+  const arrs = deps[depSelect.value];
+  arrs.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a;
+    opt.textContent = a;
+    arrSelect.appendChild(opt);
+  });
+});
+
+// Soumission du formulaire producteur
+document.getElementById('producteurForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nom: document.getElementById('nomProducteur').value.trim(),
+    telephone: document.getElementById('telProducteur').value.trim(),
+    type: document.getElementById('typeProducteur').value,
+    region: regionSelect.value,
+    departement: depSelect.value,
+    arrondissement: arrSelect.value,
+    carteMembre: document.getElementById('carteMembre').checked
+  };
+
+  try {
+    const response = await fetch('/api/producteurs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    alert(result.message);
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement du producteur', err);
+    alert('Impossible d\'enregistrer le producteur.');
+  }
+});
+</script>
         <!-- TAB: Validation -->
         <div id="tab-validation" class="tab-content">
             <div class="stats-row">
