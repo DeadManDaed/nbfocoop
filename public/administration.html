@@ -1161,14 +1161,19 @@ const depSelect = document.getElementById('departement');
 const arrSelect = document.getElementById('arrondissement');
 
   const data = {
-    nom: document.getElementById('producerName').value.trim(),
-    telephone: document.getElementById('producerPhone').value.trim(),
-    type: document.getElementById('producerType').value,
-    region: regionSelect.value,
-    departement: depSelect.value,
-    arrondissement: arrSelect.value,
-    carteMembre: document.getElementById('carteMembre').checked
+    nom_producteur: document.getElementById('producerName').value.trim(),
+    tel_producteur: document.getElementById('producerPhone').value.trim(),
+    type_producteur: document.getElementById('producerType').value,
+    region: parseInt(regionSelect.value),
+    departement_id: pasrseInf(depSelect.value),
+    arrondissement_id: parseInt(arrSelect.value),
+    carte_membre: document.getElementById('carteMembre').checked,
+    points_fidelite: 0, 
+      solde: 0,
+      localite: '',
+      produits: document.getElementById('producerProducts').value.trim
   };
+    
     console.log('=== DÉBOGAGE DES DONNÉES ===');
 console.log('Données complètes:', data);
 console.log('Région:', regionSelect.value);
