@@ -131,7 +131,7 @@ app.post('/api/login', async (req, res) => {
    Routes localités 
    ========================= */
 // Charger toutes les régions
-app.get('/regions', async (req, res) => {
+app.get('/api/regions', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, nom FROM regions ORDER BY nom');
     res.json(result.rows);
@@ -142,7 +142,7 @@ app.get('/regions', async (req, res) => {
 });
 
 // Charger les départements d’une région
-app.get('/departements/:regionId', async (req, res) => {
+app.get('/api/departements/:regionId', async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, nom FROM departements WHERE region_id = $1 ORDER BY nom',
@@ -156,7 +156,7 @@ app.get('/departements/:regionId', async (req, res) => {
 });
 
 // Charger les arrondissements d’un département
-app.get('/arrondissements/:departementId', async (req, res) => {
+app.get('/api/arrondissements/:departementId', async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, nom FROM arrondissements WHERE departement_id = $1 ORDER BY nom',
@@ -272,7 +272,7 @@ app.post('/operations', async (req, res) => {
   }
 });
 
-app.get('/operations', async (req, res) => {
+app.get('/api/operations', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM operations_caisse ORDER BY id DESC');
     res.json(result.rows);
@@ -285,7 +285,7 @@ app.get('/operations', async (req, res) => {
 /* =========================
    Routes Stock
    ========================= */
-app.post('/stock', async (req, res) => {
+app.post('/api/stock', async (req, res) => {
   try {
     const { produit, type_mouvement, quantite, unite, lot_id, magasin, utilisateur } = req.body;
     const sql = 'INSERT INTO stock (produit, type_mouvement, quantite, unite, lot_id, magasin) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *';
@@ -298,7 +298,7 @@ app.post('/stock', async (req, res) => {
   }
 });
 
-app.get('/stock', async (req, res) => {
+app.get('/api/stock', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM stock ORDER BY id DESC');
     res.json(result.rows);
@@ -311,7 +311,7 @@ app.get('/stock', async (req, res) => {
 /* =========================
    Routes Cheques
    ========================= */
-app.post('/cheques', async (req, res) => {
+app.post('/api/cheques', async (req, res) => {
   try {
     const { numero_cheque, banque, montant, emetteur, utilisateur } = req.body;
     const sql = 'INSERT INTO cheques (numero_cheque, banque, montant, emetteur, utilisateur) VALUES ($1,$2,$3,$4,$5) RETURNING *';
@@ -324,7 +324,7 @@ app.post('/cheques', async (req, res) => {
   }
 });
 
-app.get('/cheques', async (req, res) => {
+app.get('/api/cheques', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM cheques ORDER BY id DESC');
     res.json(result.rows);
@@ -447,7 +447,7 @@ app.post('/api/validations/:id/reject', async (req, res) => {
 /* =========================
    Routes Audit et vues
    ========================= */
-app.get('/audit', async (req, res) => {
+app.get('/api/audit', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM audit_log ORDER BY date_action DESC');
     res.json(result.rows);
@@ -457,7 +457,7 @@ app.get('/audit', async (req, res) => {
   }
 });
 
-app.get('/lot-stock', async (req, res) => {
+app.get('/api/lot-stock', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM lot_stock_etat ORDER BY lot_id');
     res.json(result.rows);
@@ -467,7 +467,7 @@ app.get('/lot-stock', async (req, res) => {
   }
 });
 
-app.get('/audit-details', async (req, res) => {
+app.get('/api/audit-details', async (req, res) => {
   try {
     const has = await pool.query("SELECT to_regclass('public.audit_details') AS v");
     if (has.rows[0].v) {
