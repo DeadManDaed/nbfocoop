@@ -903,7 +903,20 @@ async function submitFormToTable(formName, tableName, data) {
   }
 }
         
-/*
+
+        document.getElementById('createUserForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const data = {
+    username: document.getElementById('newUsername').value.trim(),
+    password: document.getElementById('newPassword').value,
+    role: document.getElementById('newRole').value
+  };
+
+  submitFormToTable('createUserForm', 'users', data);
+});
+
+        /*
         
         document.getElementById('createUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
