@@ -1247,6 +1247,7 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
   console.log('Arrondissement:', arrSelect.value);
   console.log('JSON à envoyer:', JSON.stringify(data, null, 2));
 
+/*
   try {
     const response = await fetch('/api/producteurs', {
       method: 'POST',
@@ -1295,6 +1296,9 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
     }, 3000);
   }
 });
+*/
+
+  submitFormToTable('addProducerForm', 'producteurs', data);
 
         // === GESTION DES VALIDATIONS ===
         async function loadValidations() {
