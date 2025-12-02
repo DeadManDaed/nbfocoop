@@ -810,17 +810,19 @@
                 return;
             }
 // Charger les régions au démarrage
-fetch('/regions')
-  .then(res => res.json())
-  .then(regions => {
-    const regionSelect = document.getElementById('region');
-    regions.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id;
-      opt.textContent = r.nom;
-      regionSelect.appendChild(opt);
-    });
-  });
+    function loadRegions() {
+        fetch('/api/regions')
+          .then(res => res.json())
+          .then(regions => {
+            const regionSelect = document.getElementById('region');
+            regions.forEach(r => {
+              const opt = document.createElement('option');
+              opt.value = r.id;
+              opt.textContent = r.nom;
+              regionSelect.appendChild(opt);
+            });
+          });
+            }
             // Charger les données initiales
             loadUsers();
             loadMessages();
@@ -828,6 +830,7 @@ fetch('/regions')
             loadValidations();
             loadAudit();
             loadUsersForMessages();
+            loadRegions();
         });
 
         // Gestion des tabs
@@ -865,7 +868,7 @@ fetch('/regions')
             }
 
             try {
-                const response = await fetch('/users', {
+                const response = await fetch('/api/users', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, role })
@@ -888,7 +891,7 @@ fetch('/regions')
             const container = document.getElementById('usersTableContainer');
             
             try {
-                const response = await fetch('/users');
+                const response = await fetch('/api/users');
                 const users = await response.json();
 
                 if (users.length === 0) {
@@ -945,7 +948,7 @@ function getRoleLabel(role) {
             }
 
             try {
-                const response = await fetch(`/users/${userId}`, { method: 'DELETE' });
+                const response = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
                 if (response.ok) {
                     showAlert('Utilisateur supprimé avec succès', 'success');
                     loadUsers();
@@ -960,7 +963,7 @@ function getRoleLabel(role) {
         // === GESTION DES MESSAGES ===
         async function loadUsersForMessages() {
             try {
-                const response = await fetch('/users');
+                const response = await fetch('/api/users');
                 const users = await response.json();
                 const select = document.getElementById('messageRecipient');
                 
@@ -1018,53 +1021,76 @@ function getRoleLabel(role) {
                     return;
                 }
 
-                container.innerHTML = messages.map(msg => `
-                    <div class="message-item">
-                        <div class="message-header">
-                            <span class="message-sender">De: ${msg.sender}</span>
-                            <span class="message-date">${new Date(msg.date).toLocaleString('fr-FR')}</span>
-                        </div>
-                        <strong>${msg.subject}</strong>
-                        <div class="message-body">${msg.body}</div>
-                    </div>
-                `).join('');
+                const container = document.getElementById('messagesContainer');
+container.innerHTML = ''; // on vide
+
+messages.forEach(msg => {
+  const item = document.createElement('div');
+  item.className = 'message-item';
+
+  const header = document.createElement('div');
+  header.className = 'message-header';
+
+  const sender = document.createElement('span');
+  sender.className = 'message-sender';
+  sender.textContent = `De: ${msg.sender}`;
+
+  const date = document.createElement('span');
+  date.className = 'message-date';
+  date.textContent = new Date(msg.date).toLocaleString('fr-FR');
+
+  header.appendChild(sender);
+  header.appendChild(date);
+
+  const subject = document.createElement('strong');
+  subject.textContent = msg.subject;
+
+  const body = document.createElement('div');
+  body.className = 'message-body';
+  body.textContent = msg.body; // ⚠️ textContent = sécurité
+
+  item.appendChild(header);
+  item.appendChild(subject);
+  item.appendChild(body);
+
+  container.appendChild(item);
+});
+
             } catch (error) {
                 container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
             }
         }
 
-        // === GESTION DES PRODUCTEURS ===
-        document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Remplissage dynamique des listes Région → Département → Arrondissement
             
-  /*          const producerData = {
-                nom_producteur: document.getElementById('producerName').value,
-                tel_producteur: document.getElementById('producerPhone').value,
-                type_producteur: document.getElementById('producerType').value,
-                produits: document.getElementById('producerProducts').value,
-                utilisateur: currentUser.username
-            };
+// Quand une région est choisie → charger les départements
+document.getElementById('region').addEventListener('change', async (e) => {
+  const depSelect = document.getElementById('departement');
+  depSelect.innerHTML = '';
+  const res = await fetch(`/api/departements/${e.target.value}`);
+  const deps = await res.json();
+  deps.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.id;
+    opt.textContent = d.nom;
+    depSelect.appendChild(opt);
+  });
+});
 
-            try {
-                const response = await fetch('/api/producers', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(producerData)
-                });
-
-                if (response.ok) {
-                    showAlert('Producteur ajouté avec succès', 'success');
-                    e.target.reset();
-                    loadProducers();
-                } else {
-                    showAlert('Erreur lors de l\'ajout du producteur', 'error');
-                }
-            } catch (error) {
-                showAlert('Erreur de connexion', 'error');
-            }
-        });
-
-        async function loadProducers() {
+// Quand un département est choisi → charger les arrondissements
+document.getElementById('departement').addEventListener('change', async (e) => {
+  const arrSelect = document.getElementById('arrondissement');
+  arrSelect.innerHTML = '';
+  const res = await fetch(`/api/arrondissements/${e.target.value}`);
+  const arrs = await res.json();
+  arrs.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = a.nom;
+    arrSelect.appendChild(opt);
+  });
+});
+            async function loadProducers() {
             const container = document.getElementById('producersTableContainer');
             
             try {
@@ -1127,116 +1153,25 @@ function getRoleLabel(role) {
                 showAlert('Erreur de suppression', 'error');
             }
         }
-*/
-
-    // Remplissage dynamique des listes Région → Département → Arrondissement
-            
-// Quand une région est choisie → charger les départements
-document.getElementById('region').addEventListener('change', async (e) => {
-  const depSelect = document.getElementById('departement');
-  depSelect.innerHTML = '';
-  const res = await fetch(`/departements/${e.target.value}`);
-  const deps = await res.json();
-  deps.forEach(d => {
-    const opt = document.createElement('option');
-    opt.value = d.id;
-    opt.textContent = d.nom;
-    depSelect.appendChild(opt);
-  });
-});
-
-// Quand un département est choisi → charger les arrondissements
-document.getElementById('departement').addEventListener('change', async (e) => {
-  const arrSelect = document.getElementById('arrondissement');
-  arrSelect.innerHTML = '';
-  const res = await fetch(`/arrondissements/${e.target.value}`);
-  const arrs = await res.json();
-  arrs.forEach(a => {
-    const opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.nom;
-    arrSelect.appendChild(opt);
-  });
-});
-            async function loadProducers() {
-            const container = document.getElementById('producersTableContainer');
-            
-            try {
-                const response = await fetch('/producers');
-                const producers = await response.json();
-
-                if (producers.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun producteur enregistré</p>';
-                    return;
-                }
-
-                container.innerHTML = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Téléphone</th>
-                                <th>Type</th>
-                                <th>Région</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${producers.map(p => `
-                                <tr>
-                                    <td>${p.nom_producteur}</td>
-                                    <td>${p.tel_producteur}</td>
-                                    <td><span class="badge badge-stock">${p.type_producteur}</span></td>
-                                    <td>${p.region || '-'}</td>
-                                    <td>
-                                        <div class="action-btns">
-                                            <button class="btn-icon btn-secondary" onclick="editProducer(${p.id})" title="Modifier">✏️</button>
-                                            <button class="btn-icon btn-danger" onclick="deleteProducer(${p.id})" title="Supprimer">🗑️</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } catch (error) {
-                container.innerHTML = '<p style="color: #c62828; text-align: center; padding: 40px;">Erreur de chargement</p>';
-            }
-        }
-
-        function editProducer(id) {
-            alert('Fonction de modification à implémenter - ID: ' + id);
-        }
-
-        async function deleteProducer(id) {
-            if (!confirm('Supprimer ce producteur ?')) return;
-            
-            try {
-                const response = await fetch(`/producers/${id}`, { method: 'DELETE' });
-                if (response.ok) {
-                    showAlert('Producteur supprimé', 'success');
-                    loadProducers();
-                }
-            } catch (error) {
-                showAlert('Erreur de suppression', 'error');
-            }
-        }
 
 // Soumission du formulaire producteur
 document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+const regionSelect = document.getElementById('region');
+const depSelect = document.getElementById('departement');
+const arrSelect = document.getElementById('arrondissement');
 
   const data = {
-    nom: document.getElementById('nomProducteur').value.trim(),
-    telephone: document.getElementById('telProducteur').value.trim(),
-    type: document.getElementById('typeProducteur').value,
+    nom: document.getElementById('producerName').value.trim(),
+    telephone: document.getElementById('producerPhone').value.trim(),
+    type: document.getElementById('producerType').value,
     region: regionSelect.value,
     departement: depSelect.value,
     arrondissement: arrSelect.value,
     carteMembre: document.getElementById('carteMembre').checked
   };
   try {
-    const response = await fetch('/producteurs', {
+    const response = await fetch('/api/producers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -1254,7 +1189,7 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
             const container = document.getElementById('validationsTableContainer');
             
             try {
-                const response = await fetch('/validations');
+                const response = await fetch('/api/validations');
                 const validations = await response.json();
 
                 const pending = validations.filter(v => v.status === 'pending').length;
@@ -1308,7 +1243,7 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
 
         async function approveValidation(id) {
             try {
-                const response = await fetch(`/validations/${id}/approve`, { method: 'POST' });
+                const response = await fetch(`/api/validations/${id}/approve`, { method: 'POST' });
                 if (response.ok) {
                     showAlert('Modification validée', 'success');
                     loadValidations();
@@ -1323,7 +1258,7 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
             if (!reason) return;
             
             try {
-                const response = await fetch(`/validations/${id}/reject`, {
+                const response = await fetch(`/api/validations/${id}/reject`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ reason })
@@ -1350,7 +1285,7 @@ document.getElementById('addProducerForm').addEventListener('submit', async (e) 
             const container = document.getElementById('auditTableContainer');
             
             try {
-                const response = await fetch('/audit');
+                const response = await fetch('/api/audit');
                 const audit = await response.json();
 
                 if (audit.length === 0) {
