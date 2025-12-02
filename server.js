@@ -171,7 +171,7 @@ app.get('/api/arrondissements/:departementId', async (req, res) => {
 /* =========================
    Routes Users
    ========================= */
-app.post('/users', async (req, res) => {
+app.post('/api/users', async (req, res) => {
   try {
     const { username, password, role } = req.body;
 	console.log('Création utilisateur : ', { username, role }); // LOG AJOUTÉ
@@ -185,7 +185,7 @@ app.post('/users', async (req, res) => {
   }
 });
 
-app.get('/users', async (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, username, role, created_at FROM users ORDER BY id');
     res.json(result.rows);
@@ -195,7 +195,7 @@ app.get('/users', async (req, res) => {
   }
 });
 
-app.delete('/users/:id', async (req, res) => {
+app.delete('/api/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
