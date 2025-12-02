@@ -1094,7 +1094,7 @@ document.getElementById('departement').addEventListener('change', async (e) => {
             const container = document.getElementById('producersTableContainer');
             
             try {
-                const response = await fetch('/api/producers');
+                const response = await fetch('/api/producteurs');
                 const producers = await response.json();
 
                 if (producers.length === 0) {
@@ -1144,7 +1144,7 @@ document.getElementById('departement').addEventListener('change', async (e) => {
             if (!confirm('Supprimer ce producteur ?')) return;
             
             try {
-                const response = await fetch(`/api/producers/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/api/producteurs/${id}`, { method: 'DELETE' });
                 if (response.ok) {
                     showAlert('Producteur supprimé', 'success');
                     loadProducers();
@@ -1171,7 +1171,7 @@ const arrSelect = document.getElementById('arrondissement');
     carteMembre: document.getElementById('carteMembre').checked
   };
   try {
-    const response = await fetch('/api/producers', {
+    const response = await fetch('/api/producteurs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
