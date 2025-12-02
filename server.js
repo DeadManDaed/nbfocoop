@@ -370,7 +370,7 @@ app.get('/api/messages', async (req, res) => {
 /* =========================
    Routes Producteurs
    ========================= */
-app.post('/api/producers', async (req, res) => {
+app.post('/api/producteurs', async (req, res) => {
   try {
     const { nom_producteur, tel_producteur, type_producteur, region, produits, utilisateur } = req.body;
     const sql = `INSERT INTO producteurs (nom_producteur, tel_producteur, type_producteur, region, produits) 
@@ -384,7 +384,7 @@ app.post('/api/producers', async (req, res) => {
   }
 });
 
-app.get('/api/producers', async (req, res) => {
+app.get('/api/producteurs', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM producteurs ORDER BY id DESC');
     res.json(result.rows);
@@ -394,7 +394,7 @@ app.get('/api/producers', async (req, res) => {
   }
 });
 
-app.delete('/api/producers/:id', async (req, res) => {
+app.delete('/api/producteurs/:id', async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM producteurs WHERE id = $1', [id]);
