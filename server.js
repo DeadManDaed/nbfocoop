@@ -131,6 +131,25 @@ app.post('/api/login', async (req, res) => {
 /* =========================
 	Fonctions génériques
    ========================  */
+// Mettre à jour une ligne dans une table
+async function updateTable(tableName, data, idColumn, idValue) {
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  // Construire la liste des colonnes = $1, $2, ...
+  const setClause = keys.map((key, i) => `${key} = $${i + 1}`).join(', ');
+  const query = `UPDATE ${tableName} SET ${setClause} WHERE ${idColumn} = $${keys.length + 1} RETURNING *`;
+
+  try {
+    const result = await pool.query(query, [...values, idValue]);
+    return { success: true, row: result.rows[0] };
+  } catch (err) {
+    console.error(`Erreur lors de la mise à jour dans ${tableName}:`, err);
+    return { success: false, error: err.message };
+  }
+}
+
+
 // Fonction générique pour insérer des données dans une table (server.js)
 async function insertIntoTable(tableName, data) {
   const keys = Object.keys(data);
