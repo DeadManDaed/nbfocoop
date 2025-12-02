@@ -127,6 +127,27 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+/* =========================
+	Fonctions génériques
+   ========================  */
+// Fonction générique pour insérer des données dans une table (server.js)
+async function insertIntoTable(tableName, data) {
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+  const query = `INSERT INTO ${tableName} (${keys.join(', ')}) VALUES (${placeholders}) RETURNING *`;
+
+  try {
+    const result = await pool.query(query, values);
+    return { success: true, row: result.rows[0] };
+  } catch (err) {
+    console.error(`Erreur lors de l'insertion dans ${tableName}:`, err);
+    return { success: false, error: err.message };
+  }
+}
+
 /* =========================
    Routes localités 
    ========================= */
