@@ -1156,9 +1156,10 @@ document.getElementById('departement').addEventListener('change', async (e) => {
 // Soumission du formulaire producteur
 document.getElementById('addProducerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-const regionSelect = document.getElementById('region');
-const depSelect = document.getElementById('departement');
-const arrSelect = document.getElementById('arrondissement');
+
+  const regionSelect = document.getElementById('region');
+  const depSelect = document.getElementById('departement');
+  const arrSelect = document.getElementById('arrondissement');
 
   const data = {
     nom_producteur: document.getElementById('producerName').value.trim(),
@@ -1168,18 +1169,19 @@ const arrSelect = document.getElementById('arrondissement');
     departement_id: parseInt(depSelect.value),
     arrondissement_id: parseInt(arrSelect.value),
     carte_membre: document.getElementById('carteMembre').checked,
-    points_fidelite: 0, 
-      solde: 0,
-      localite: '',
-      produits: document.getElementById('producerProducts').value.trim
+    points_fidelite: 0,
+    solde: 0,
+    localite: '',
+    produits: document.getElementById('producerProducts').value.trim() // ⚠️ ajouter () ici
   };
-    
-    console.log('=== DÉBOGAGE DES DONNÉES ===');
-console.log('Données complètes:', data);
-console.log('Région:', regionSelect.value);
-console.log('Département:', depSelect.value);
-console.log('Arrondissement:', arrSelect.value);
-console.log('JSON à envoyer:', JSON.stringify(data, null, 2));
+
+  console.log('=== DÉBOGAGE DES DONNÉES ===');
+  console.log('Données complètes:', data);
+  console.log('Région:', regionSelect.value);
+  console.log('Département:', depSelect.value);
+  console.log('Arrondissement:', arrSelect.value);
+  console.log('JSON à envoyer:', JSON.stringify(data, null, 2));
+
   try {
     const response = await fetch('/api/producteurs', {
       method: 'POST',
@@ -1187,13 +1189,48 @@ console.log('JSON à envoyer:', JSON.stringify(data, null, 2));
       body: JSON.stringify(data)
     });
 
+    if (!response.ok) {
+      throw new Error(`Erreur ${response.status}`);
+    }
+
     const result = await response.json();
-    alert(result.message);
+    console.log('Réponse complète:', result);
+
+    const submitButton = document.querySelector('#addProducerForm button[type="submit"]');
+    const originalText = submitButton.textContent;
+
+    // Afficher le message de succès sur le bouton
+    submitButton.textContent = '✓ Enregistré avec succès !';
+    submitButton.style.backgroundColor = '#10b981'; // Vert succès
+    submitButton.disabled = true;
+
+    // Réinitialiser le formulaire
+    document.getElementById('addProducerForm').reset();
+
+    // Restaurer le bouton après 3 secondes
+    setTimeout(() => {
+      submitButton.textContent = originalText;
+      submitButton.style.backgroundColor = ''; // Couleur originale
+      submitButton.disabled = false;
+    }, 3000);
+
   } catch (err) {
     console.error('Erreur lors de l\'enregistrement du producteur', err);
-    alert('Impossible d\'enregistrer le producteur.');
+
+    const submitButton = document.querySelector('#addProducerForm button[type="submit"]');
+    const originalText = submitButton.textContent;
+
+    // Afficher le message d'erreur sur le bouton
+    submitButton.textContent = '✗ Erreur lors de l\'enregistrement';
+    submitButton.style.backgroundColor = '#ef4444'; // Rouge erreur
+
+    setTimeout(() => {
+      submitButton.textContent = originalText;
+      submitButton.style.backgroundColor = '';
+    }, 3000);
   }
 });
+
         // === GESTION DES VALIDATIONS ===
         async function loadValidations() {
             const container = document.getElementById('validationsTableContainer');
