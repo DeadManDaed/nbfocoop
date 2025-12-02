@@ -1169,6 +1169,12 @@ const arrSelect = document.getElementById('arrondissement');
     arrondissement: arrSelect.value,
     carteMembre: document.getElementById('carteMembre').checked
   };
+    console.log('=== DÉBOGAGE DES DONNÉES ===');
+console.log('Données complètes:', data);
+console.log('Région:', regionSelect.value);
+console.log('Département:', depSelect.value);
+console.log('Arrondissement:', arrSelect.value);
+console.log('JSON à envoyer:', JSON.stringify(data, null, 2));
   try {
     const response = await fetch('/api/producteurs', {
       method: 'POST',
